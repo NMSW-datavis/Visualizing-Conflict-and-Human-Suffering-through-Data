@@ -172,14 +172,14 @@ section:last-of-type {
   max-width: 75%;
   margin: 0 auto;
   padding: 4rem 1rem;
-  /* NEW: Background graphic styles */
- background-image: url('conflict-data-background.png'); /* The new background image */
- background-size: 100%; /* Adjust size as needed, e.g., 'contain', 'cover', or percentage */
+
+ background-image: url('conflict-data-background.png');
+ background-size: 100%; 
  background-position: center center;
  background-repeat: no-repeat;
- background-blend-mode: multiply; /* Blends the image with the background color */
- opacity: 1; /* Keep the section opaque */
- z-index: 1; /* Ensure text is above background */
+ background-blend-mode: multiply; 
+ opacity: 1; 
+ z-index: 1; 
 }
 #project-description a {
     color: var(--color-primary);
