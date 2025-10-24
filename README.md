@@ -93,7 +93,7 @@ The datasets informing this project come from respected, openly accessible insti
    2. Push to the main branch
    3. In GitHub repo settings, enable Pages → select branch main → / (root)
 
-**The site is live at:** https://nmsw-datavis.github.io/
+**The site is live at:** https://nmsw-datavis.github.io/Visualizing-Conflict-and-Human-Suffering-through-Data/
 
 ---
 
