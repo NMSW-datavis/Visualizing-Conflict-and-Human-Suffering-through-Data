@@ -1,0 +1,346 @@
+:root {
+  --font-heading: 'Roboto Slab', serif;
+  --font-body: 'Fira Sans', sans-serif;
+  --color-bg: #fcfbf8;
+  --color-primary: #003a70;
+  --color-accent: #f5b7a3; /* soft coral */
+  --color-secondary: #6b6b6b;
+  --color-text: #1f1f1f;
+  --color-border: rgba(0, 58, 112, 0.15);
+}
+
+/* Global reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.7;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Floating circular accent (Fragapane-inspired) */
+body::before {
+  content: "";
+  position: absolute;
+  top: -200px;
+  right: -200px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at center, var(--color-accent) 0%, transparent 70%);
+  opacity: 0.15;
+  z-index: -1;
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+}
+
+h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Header */
+.site-header {
+  text-align: center;
+  padding: 5rem 1rem 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-header h2 {
+  font-size: 1rem;
+  color: var(--color-secondary);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.site-header h3 {
+  font-size: 1rem;
+  color: var(--color-secondary);
+  font-weight: 400;
+  margin-bottom: 1rem;
+}
+
+.intro-subtitle {
+  font-size: 1.2rem;
+  color: var(--color-secondary);
+  max-width: 60ch;
+  margin: 0 auto;
+}
+/* Byline styling */
+.byline {
+  margin-top: 1.5rem;
+  font-family: var(--font-body);
+  color: var(--color-secondary);
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-transform: none;
+  position: relative;
+}
+
+.by-text {
+  font-style: italic;
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.group-name {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.members {
+  color: var(--color-secondary);
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Optional decorative divider under byline */
+.byline::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(to right, var(--color-accent), var(--color-primary));
+  margin-top: 1rem;
+  border-radius: 1px;
+  opacity: 0.6;
+}
+
+
+/* Section Styling */
+section {
+  padding: 3.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+/* --- About Section Enhancements --- */
+#project-description {
+  position: relative;
+  text-align: center;
+  max-width: 70ch;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+/* Soft abstract background circle */
+.about-bg-shape {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle at center, var(--color-accent) 0%, transparent 70%);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+/* Highlighted quote */
+.about-quote {
+  font-family: var(--font-heading);
+  font-style: italic;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.about-quote::before,
+.about-quote::after {
+  content: "“";
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  opacity: 0.3;
+  position: absolute;
+}
+
+.about-quote::before {
+  left: -1rem;
+  top: -0.5rem;
+}
+
+.about-quote::after {
+  content: "”";
+  right: -1rem;
+  bottom: -0.5rem;
+}
+
+/* Paragraphs */
+#project-description p {
+  color: var(--color-text);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.75;
+}
+
+/* Subtle hover accent for links */
+#project-description a {
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-accent);
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+#project-description a:hover {
+  color: var(--color-accent);
+  border-color: var(--color-primary);
+}
+
+
+section:last-of-type {
+  border-bottom: none;
+}
+
+#project-description {
+  text-align: center;
+  max-width: 70ch;
+  margin: 0 auto;
+}
+
+#visualizations {
+  text-align: center;
+}
+
+/* --- Visualization Gallery --- */
+.visualization-gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  margin-top: 3rem;
+  list-style: none;
+}
+
+.visualization-gallery li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Larger, glowing, animated circles */
+.visualization-gallery .circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--color-accent) 0%,
+    var(--color-primary) 70%
+  );
+  opacity: 0.85;
+  box-shadow: 0 0 20px rgba(0, 58, 112, 0.2),
+              inset 0 0 20px rgba(245, 183, 163, 0.25);
+  transition: transform 0.6s ease, opacity 0.3s ease;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Soft floating motion */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Hover effect for interactivity */
+.visualization-gallery .circle:hover {
+  transform: scale(1.08);
+  opacity: 1;
+  box-shadow: 0 0 25px rgba(0, 58, 112, 0.3),
+              inset 0 0 25px rgba(245, 183, 163, 0.3);
+}
+
+/* Label under circles */
+.visualization-gallery p {
+  margin-top: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  color: var(--color-secondary);
+  transition: color 0.3s ease;
+}
+
+.visualization-gallery li:hover p {
+  color: var(--color-primary);
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  padding: 1.5rem 0; /* smaller padding */
+  text-align: center;
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+  background: transparent;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.footer-logo img {
+  width: 45px; /* smaller logo */
+  height: auto;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+  vertical-align: middle;
+}
+
+.footer-logo img:hover {
+  opacity: 1;
+}
+
+.site-footer p {
+  margin: 0;
+  line-height: 1.4;
+  color: var(--color-secondary);
+}
+
+/* Responsive adjustment */
+@media (max-width: 480px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
