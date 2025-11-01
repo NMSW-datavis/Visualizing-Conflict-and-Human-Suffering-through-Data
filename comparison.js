@@ -1,4 +1,3 @@
-// comparison.js
 // Story of Global Conflict — Interactive Visualizations
 // Author: MNSW Group — Università di Genova
 
@@ -77,6 +76,7 @@ const tooltip1 = d3.select("body").append("div")
   .style("opacity", 0);
 
 // Load the dataset
+// --- Assuming file is in root, removed "data/" ---
 d3.csv("data/number_of_reported_civilian_fatalities_by_country-year_as-of-17Oct2025_0.csv").then(raw => {
 
   // Clean and parse
@@ -138,20 +138,36 @@ d3.csv("data/number_of_reported_civilian_fatalities_by_country-year_as-of-17Oct2
   let currentMode = "highestOverall";
 
   function renderHeatmap(mode) {
+    d3.select("#heatmap-legend").selectAll("*").remove();
     currentMode = mode;
     const countries = modeCountries[mode];
+    console.log("Rendering heatmap for mode:", mode, "with countries:", countries);
     if (!countries || !countries.length) return;
-
+    // console.log("Countries to display:", data);
     // For 5-year modes, rank by 5 years but show full timeline
     const filtered = data.filter(d => countries.includes(d.Country));
-
-    const yearsInView = Array.from(new Set(filtered.map(d => d.Year))).sort(d3.ascending);
+    // console.log("Filtered data count:", filtered.length, filtered);
+    const yearsInView = Array.from(new Set(data.map(d => d.Year))).sort(d3.ascending);
+    console.log("Years in view:", yearsInView);
     const x = d3.scaleBand().domain(yearsInView).range([0, innerW]).padding(0.03);
     const y = d3.scaleBand().domain(countries).range([0, innerH]).padding(0.03);
 
-    const maxFatal = d3.max(filtered, d => d.Fatalities) || 1;
-    const color = d3.scaleSequential(d3.interpolateYlOrRd).domain([0, maxFatal]);
+    // Compute maxFatal
+const maxFatal = d3.max(data, d => d.Fatalities) || 1;
 
+// Power scale for perceptual contrast
+const colorScale = d3.scalePow()
+    .exponent(0.5)           // tweak exponent: <1 boosts small values
+    .domain([1, maxFatal])   // 1 to max, 0 handled separately
+    .range(["#ffd4d4ff", "#9b0c04ff"]); // faint → strong red
+
+// Function to get color, handle zero separately
+function getColor(d) {
+    return d.Fatalities === 0 ? "#ffffff" : colorScale(d.Fatalities);
+}
+
+
+  
     svg.selectAll("*").remove();
 
     // Axes
@@ -181,7 +197,7 @@ d3.csv("data/number_of_reported_civilian_fatalities_by_country-year_as-of-17Oct2
           .attr("width", x.bandwidth())
           .attr("height", y.bandwidth())
           .attr("rx", 3)
-          .style("fill", d => color(d.Fatalities))
+          .style("fill", getColor)
           .on("mousemove", (event,d)=>{
             tooltip1.transition().duration(100).style("opacity",1);
             tooltip1.html(`<strong>${d.Country}</strong><br>Year: ${d.Year}<br>Fatalities: ${d.Fatalities.toLocaleString()}`)
@@ -190,111 +206,123 @@ d3.csv("data/number_of_reported_civilian_fatalities_by_country-year_as-of-17Oct2
           })
           .on("mouseout",()=>tooltip1.transition().duration(200).style("opacity",0)),
         update => update.transition().duration(300)
-          .style("fill", d => color(d.Fatalities)),
+          .style("fill", d => getColor(d)),
         exit => exit.transition().duration(200).style("opacity",0).remove()
       );
 
-    // Legend
-    d3.select("#heatmap-legend").html("");
-    const legendW = 320, legendH = 12;
-    const legendSvg = d3.select("#heatmap-legend")
-      .append("svg")
-      .attr("width", legendW)
-      .attr("height", 48);
+const legendW = 360, legendH = 12;
+const legendWrap = d3.select("#heatmap-legend");
+legendWrap.selectAll("*").remove();
 
-    const defs = legendSvg.append("defs");
-    const gradient = defs.append("linearGradient").attr("id", "hm-grad");
-    d3.ticks(0,1,8).forEach(t => {
-      gradient.append("stop").attr("offset", `${t*100}%`).attr("stop-color", d3.interpolateYlOrRd(t));
-    });
+const legendContainer = legendWrap.append("div")
+    .style("margin", "0 20px");  // horizontal margin 20px
 
-    legendSvg.append("rect")
-      .attr("width", legendW)
-      .attr("height", legendH)
-      .attr("y", 8)
-      .attr("rx", 3)
-      .style("fill", "url(#hm-grad)");
+const legendSvg = legendContainer.append("svg")
+    .attr("width", legendW)
+    .attr("height", 48);
 
-    const legendScale = d3.scaleLinear().domain([0, maxFatal]).range([0, legendW]);
-    legendSvg.append("g")
-      .attr("transform", `translate(0, ${8 + legendH})`)
-      .call(d3.axisBottom(legendScale).ticks(4).tickFormat(d3.format(".2s")))
-      .selectAll("text")
-      .style("font-size","10px");
+const defs = legendSvg.append("defs");
+const gradient = defs.append("linearGradient").attr("id", "hm-grad");
+
+// Create gradient stops
+const nStops = 100;
+for (let i = 0; i <= nStops; i++) {
+    const val = i / nStops * maxFatal;
+    const offset = (i / nStops) * 100;
+    gradient.append("stop")
+        .attr("offset", offset + "%")
+        .attr("stop-color", val === 0 ? "#ffffff" : colorScale(Math.max(val,1)));
+}
+
+legendSvg.append("rect")
+    .attr("height", legendH)
+    .attr("width", legendW )
+    .attr("y", 8)
+    .attr("rx", 3)
+    .style("fill", "url(#hm-grad)");
+
+const legendScale = d3.scaleLinear()
+    .domain([0, maxFatal])
+    .range([0, legendW]);
+
+legendSvg.append("g")
+    .attr("transform", `translate(0, ${8 + legendH})`)
+    .call(d3.axisBottom(legendScale).ticks(6).tickFormat(d3.format(".2s")))
+    .selectAll("text")
+    .style("font-size","10px");
 
     // Summary
 
     // ---------- Summary and Totals ----------
 
-// Compute totals for selected countries (last 5 years and all years)
-let totalAll = d3.sum(
-  data.filter(d => countries.includes(d.Country)),
-  d => d.Fatalities
-);
+    // Compute totals for selected countries (last 5 years and all years)
+    let totalAll = d3.sum(
+      data.filter(d => countries.includes(d.Country)),
+      d => d.Fatalities
+    );
 
-let total5 = d3.sum(
-  data.filter(d => countries.includes(d.Country) && d.Year >= cutoff),
-  d => d.Fatalities
-);
+    let total5 = d3.sum(
+      data.filter(d => countries.includes(d.Country) && d.Year >= cutoff),
+      d => d.Fatalities
+    );
 
-const nCountries = countries.length;
+    const nCountries = countries.length;
 
-// Averages per country
-let avgAll = totalAll / nCountries;
-let avg5 = total5 / nCountries;
+    // Averages per country
+    let avgAll = totalAll / nCountries;
+    let avg5 = total5 / nCountries;
 
-// Format numbers
-const fmt = d3.format(","); // e.g. 1,234,567
-const fmtShort = d3.format(".2s"); // e.g. 1.2M
+    // Format numbers
+    const fmt = d3.format(","); // e.g. 1,234,567
+    const fmtShort = d3.format(".2s"); // e.g. 1.2M
 
-// Summary label map
-const labelMap = {
-  highestOverall: "Top 20 countries by total civilian fatalities (all years)",
-  highest5:       `Top 20 countries by civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`,
-  lowestOverall:  "20 countries with smallest non-zero total civilian fatalities (all years)",
-  lowest5:        `20 countries with smallest non-zero civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`
-};
+    // Summary label map
+    const labelMap = {
+      highestOverall: "Top 20 countries by total civilian fatalities (all years)",
+      highest5:       `Top 20 countries by civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`,
+      lowestOverall:  "20 countries with smallest non-zero total civilian fatalities (all years)",
+      lowest5:        `20 countries with smallest non-zero civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`
+    };
 
-// Build summary HTML
-let summaryHTML = `<div><strong>${labelMap[mode]}</strong></div>`;
+    // Build summary HTML
+    let summaryHTML = `<div><strong>${labelMap[mode]}</strong></div>`;
 
-if (mode === "highest5" || mode === "lowest5") {
-  summaryHTML += `
-    <div style="margin-top:8px;">
-      <span style="color:var(--color-primary); font-weight:600;">
-        Reported Fatalities (Last 5 Years): ${fmt(total5)} 
-        <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avg5)} per country)</span>
-      </span><br>
-      <span style="color:var(--color-secondary);">
-        Reported Fatalities (All Years): ${fmt(totalAll)} 
-        <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avgAll)} per country)</span>
-      </span>
-    </div>
-  `;
-} else {
-  summaryHTML += `
-    <div style="margin-top:8px;">
-      <span style="color:var(--color-primary); font-weight:600;">
-        Total Reported Fatalities: ${fmt(totalAll)} 
-        <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avgAll)} per country)</span>
-      </span>
-    </div>
-  `;
-}
+    if (mode === "highest5" || mode === "lowest5") {
+      summaryHTML += `
+        <div style="margin-top:8px;">
+          <span style="color:var(--color-primary); font-weight:600;">
+            Reported Fatalities (Last 5 Years): ${fmt(total5)} 
+            <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avg5)} per country)</span>
+          </span><br>
+          <span style="color:var(--color-secondary);">
+            Reported Fatalities (All Years): ${fmt(totalAll)} 
+            <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avgAll)} per country)</span>
+          </span>
+        </div>
+      `;
+    } else { // This block now correctly handles "highestOverall" and "lowestOverall"
+      summaryHTML += `
+        <div style="margin-top:8px;">
+          <span style="color:var(--color-primary); font-weight:600;">
+            Total Reported Fatalities: ${fmt(totalAll)} 
+            <span style="color:var(--color-secondary); font-weight:400;">(avg ${fmtShort(avgAll)} per country)</span>
+          </span>
+        </div>
+      `;
+    }
 
-// Apply animated update
-const summaryEl = d3.select("#heatmap-summary");
-summaryEl.html(summaryHTML);
-summaryEl.classed("fade-in", false);
-setTimeout(() => summaryEl.classed("fade-in", true), 50);
+    // Apply animated update
+    const summaryEl = d3.select("#heatmap-summary");
+    summaryEl.html(summaryHTML);
+    summaryEl.classed("fade-in", false);
+    setTimeout(() => summaryEl.classed("fade-in", true), 50);
 
-    // const labelMap = {
-    //   highestOverall: "Top 20 countries by total civilian fatalities (all years)",
-    //   highest5:       `Top 20 countries by civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`,
-    //   lowestOverall:  "20 countries with smallest non-zero total civilian fatalities (all years)",
-    //   lowest5:        `20 countries with smallest non-zero civilian fatalities in the last 5 years (${cutoff}–${maxYear}), full timeline shown`
-    // };
-    d3.select("#heatmap-summary").html(labelMap[mode]);
+    // --- BUG FIX ---
+    // The commented-out block and the line below were overwriting the summary.
+    // I have removed them.
+    //
+    //  // const labelMap = { ... };
+    //  d3.select("#heatmap-summary").html(labelMap[mode]); // <--- THIS LINE WAS THE BUG
   }
 
   // Buttons
@@ -306,15 +334,14 @@ setTimeout(() => summaryEl.classed("fade-in", true), 50);
 
   // Initial render
   renderHeatmap(currentMode);
-});// --- Define a colors object ---
-// This was missing from your snippet and caused the chart to fail.
+});
 
 
 // ------------------------------------------------------
 // 5. INTERACTIVE WAFFLE CHART — The Global Human Toll
 // ------------------------------------------------------
 
-// --- FIX 1: Removed "data/" from the file path ---
+// --- Assuming file is in root, removed "data/" ---
 d3.csv("data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv").then((data) => {
   const regions = ["World", "Africa", "Asia and Oceania", "Middle East", "Europe", "Americas"];
 
@@ -363,7 +390,7 @@ d3.csv("data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv
   const cell = Math.floor(svgSize / gridCols);
   const g = svg.append("g").attr("transform", `translate(5,5)`);
 
-  // --- FIX 2: This 'color' scale now correctly finds the 'colors' object ---
+  // This 'color' scale now correctly finds the 'colors' object
   const color = d3.scaleOrdinal()
     .domain(["Intrastate", "One-sided", "Non-state", "Interstate"])
     .range([
@@ -446,21 +473,22 @@ d3.csv("data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv
     });
 
     const squares = computeSquares(cats);
-    const rects = g.selectAll(".waffle-square").data(squares);
+    const rects = g.selectAll(".waffle-square")
+    .data(squares, (d, i) => d.category + "::" + i);
 
-    rects.exit().transition().duration(200).style("opacity", 0).remove();
-
-    rects.enter()
-      .append("rect")
+   rects.join(  enter => enter.append("rect")
       .attr("class", d => `waffle-square cat-${d.category.replace(/\s+/g, '')}`)
       .attr("width", cell - 2)
       .attr("height", cell - 2)
       .attr("rx", 3)
       .attr("x", (d, i) => (i % gridCols) * cell + 1)
       .attr("y", (d, i) => Math.floor(i / gridCols) * cell + 1)
-      .attr("fill", d => color(d.category))
       .style("opacity", 0)
-      .transition().delay((d, i) => i * 5).duration(300).style("opacity", 1);
+      .attr("fill", d => color(d.category))
+      .transition().delay((d, i) => i * 5).duration(300).style("opacity", 1),
+  update => update.transition().duration(300).attr("fill", d => color(d.category)),
+  exit => exit.transition().duration(200).style("opacity", 0).remove()
+);
 
     rects.transition().duration(300).attr("fill", d => color(d.category));
 
@@ -505,8 +533,7 @@ d3.csv("data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv
 
     li.append("span")
       .style("font-size", "0.9rem")
-      // --- FIX 3: This also now correctly finds 'colors.secondary' ---
-      .style("color", colors.secondary)
+      .style("color", colors.secondary) // Uses global colors object
       .html(d => `${d.key} — ${Math.round(d.percent)}% (${d.displayValue})`);
 
     summaryWrap.html(`<strong>${region}</strong> — ${d3.format(",")(Math.round(total))} total deaths across all recorded conflicts.`);
