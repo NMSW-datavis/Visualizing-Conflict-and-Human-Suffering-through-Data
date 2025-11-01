@@ -58,16 +58,17 @@ function norm(s) {
 }
 
 const svgW = 960, svgH = 680;
-const margin = { top: 50, right: 30, bottom: 100, left: 160 };
+const margin = { top: 50, right: 30, bottom: 100, left: Math.min(160, svgW * 0.15) };
 const innerW = svgW - margin.left - margin.right;
 const innerH = svgH - margin.top - margin.bottom;
 
 const container = d3.select("#heatmap-container");
 container.selectAll("*").remove();
 
-const rootSvg = container.append("svg")
-  .attr("width", svgW)
-  .attr("height", svgH);
+const rootSvg = container.append("svg").
+  attr("viewBox", `0 0 ${svgW} ${svgH}`)
+  .attr("width", "100%")
+  .attr("height",`auto`);
 
 const svg = rootSvg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -171,7 +172,7 @@ function getColor(d) {
     svg.selectAll("*").remove();
 
     // Axes
-    const tickEvery = Math.max(1, Math.ceil(yearsInView.length / 12));
+    const tickEvery = Math.max(1, Math.ceil(yearsInView.length / (innerW / 80)));
     const xTicks = yearsInView.filter((d,i)=>i%tickEvery===0);
     svg.append("g")
       .attr("transform", `translate(0,${innerH})`)
@@ -210,10 +211,11 @@ function getColor(d) {
         exit => exit.transition().duration(200).style("opacity",0).remove()
       );
 
-const legendW = 360, legendH = 12;
+const legendW = Math.min(360, innerW-100); // scale down on smaller screens
+const legendH = 12;
 const legendWrap = d3.select("#heatmap-legend");
 legendWrap.selectAll("*").remove();
-
+console.log("Creating legend with width:", legendW, innerW);
 const legendContainer = legendWrap.append("div")
     .style("margin", "0 20px");  // horizontal margin 20px
 

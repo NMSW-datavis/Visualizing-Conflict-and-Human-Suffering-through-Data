@@ -565,6 +565,24 @@ section:last-of-type {
   transform: translateY(-5px);
   pointer-events: none;
 }
+#heatmap-container svg {
+  width: 100%;
+  height: auto;  /* default scales height */
+}
+#heatmap-container {
+  display: flex;
+  justify-content: center;
+} 
+
+/* On small screens, make it taller */
+@media (max-width: 600px) {
+  #heatmap-legend svg{
+   width: 80vw;
+  }
+  #heatmap-container svg {
+    width: 90vw;
+  }
+}
 
 .heatmap-cell {
   cursor: pointer;
