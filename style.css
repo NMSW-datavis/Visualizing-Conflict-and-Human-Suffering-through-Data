@@ -577,15 +577,7 @@ section:last-of-type {
   opacity: 0.8;
 }
 
-.waffle-square {
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.3s ease;
-}
 
-.waffle-square:hover {
-  transform: scale(1.1);
-  opacity: 1;
-}
 .tooltip {
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -631,44 +623,40 @@ section:last-of-type {
 /* Legend + summary */
 .heatmap-legend { margin-top: 1.2rem; display: flex; justify-content: center; }
 .heatmap-summary { text-align: center; font-size: 0.95rem; color: var(--color-secondary); margin-bottom: 0.8rem; }
-
-/* Waffle chart styles */
-.waffle-controls {
-  margin-bottom: 15px;
+#waffle-chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.waffle-controls label {
-  font-weight: 500;
-  margin-right: 6px;
-  color: var(--text-dark);
-}
-
-#waffleRegion {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-}
-
 .waffle-square {
-  transition: all 0.3s ease;
+  transition: opacity 0.15s ease, stroke 0.15s ease;
+  cursor: pointer;
 }
 
-.waffle-square:hover {
-  opacity: 1;
-  transform: scale(1.1);
-  stroke: #222;
-  stroke-width: 0.4;
+.waffle-legend {
+  text-anchor: start;
 }
 
 .waffle-legend text {
   font-family: "Fira Sans", sans-serif;
 }
-
-#waffle-summary {
+#waffle-controls {
   text-align: center;
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-  color: #444;
+  margin-bottom: 1rem;
 }
+
+#waffle-legend {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.legend-item span {
+  vertical-align: middle;
+}
+#waffle-controls { text-align:center; margin-bottom:1rem; }
+.waffle-tooltip { pointer-events:none; z-index:9999; }
+.waffle-legend-inner .legend-item { display:inline-flex; align-items:center; gap:8px; margin:6px 12px; }
+.waffle-legend-inner .legend-item span { vertical-align:middle; }
+.waffle-square { transition: opacity 0.12s ease, stroke 0.12s ease; cursor: default; }

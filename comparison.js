@@ -1,7 +1,6 @@
 // comparison.js
 // Story of Global Conflict — Interactive Visualizations
 // Author: MNSW Group — Università di Genova
-// Inspired by Federica Fragapane's human-centered data storytelling style
 
 // ------------------------------------------------------
 // GLOBAL SETTINGS
@@ -307,173 +306,262 @@ setTimeout(() => summaryEl.classed("fade-in", true), 50);
 
   // Initial render
   renderHeatmap(currentMode);
-});
+});// --- Define a colors object ---
+// This was missing from your snippet and caused the chart to fail.
 
 
 // ------------------------------------------------------
 // 5. INTERACTIVE WAFFLE CHART — The Global Human Toll
 // ------------------------------------------------------
 
+// --- FIX 1: Removed "data/" from the file path ---
 d3.csv("data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv").then((data) => {
-  // Unique regions
   const regions = ["World", "Africa", "Asia and Oceania", "Middle East", "Europe", "Americas"];
 
-  // Dropdown for region selection
-  const container = d3.select("#waffle-chart-container");
-  container.selectAll("*").remove();
+  const controlsWrap = d3.select("#waffle-controls");
+  const chartContainer = d3.select("#waffle-chart-container");
+  const legendWrap = d3.select("#waffle-legend");
+  const summaryWrap = d3.select("#waffle-summary");
 
-  const controls = container.append("div")
-    .attr("class", "waffle-controls");
+  controlsWrap.selectAll("*").remove();
+  chartContainer.selectAll("*").remove();
+  legendWrap.selectAll("*").remove();
+  summaryWrap.selectAll("*").remove();
 
-  controls.append("label")
+  // --- Controls ---
+  controlsWrap.style("text-align", "center");
+  controlsWrap.append("label")
     .attr("for", "waffleRegion")
+    .style("margin-right", "8px")
     .text("Select Region: ");
 
-  const select = controls.append("select")
+  const select = controlsWrap.append("select")
     .attr("id", "waffleRegion")
-    .selectAll("option")
+    .style("padding", "6px 12px")
+    .style("border-radius", "6px")
+    .style("border", "1px solid #ccc")
+    .style("font-size", "0.95rem");
+
+  select.selectAll("option")
     .data(regions)
-    .enter()
-    .append("option")
+    .join("option")
     .attr("value", d => d)
     .text(d => d);
 
-  // Tooltip
-  const tooltip = d3.select("body").append("div")
-    .attr("class", "heatmap-tooltip")
-    .style("opacity", 0)
+  // --- SVG setup ---
+  const svgSize = 160;
+  const gridCols = 10, totalSquares = 100;
+  const svg = chartContainer.append("svg")
+    .attr("viewBox", `0 0 ${svgSize+10} ${svgSize + 10}`)
+    .attr("preserveAspectRatio", "xMidYMid meet")
+    .style("width", "80%")
+    .style("max-width", "360px")
+    .style("height", "auto")
+    .style("display", "block")
+    .style("margin", "0 auto");
+
+  const cell = Math.floor(svgSize / gridCols);
+  const g = svg.append("g").attr("transform", `translate(5,5)`);
+
+  // --- FIX 2: This 'color' scale now correctly finds the 'colors' object ---
+  const color = d3.scaleOrdinal()
+    .domain(["Intrastate", "One-sided", "Non-state", "Interstate"])
+    .range([
+      colors.primary,  // deep blue
+      colors.accent,   // coral
+      "#9ccae2",      // soft blue
+      "#b7dfc2"       // pastel mint
+    ]);
+
+  const tt = d3.select("body").append("div")
+    .attr("class", "waffle-tooltip")
     .style("position", "absolute")
     .style("pointer-events", "none")
-    .style("background", "rgba(0,0,0,0.75)")
+    .style("background", "rgba(0,0,0,0.8)")
     .style("color", "#fff")
     .style("padding", "6px 10px")
-    .style("border-radius", "6px");
+    .style("border-radius", "6px")
+    .style("font-size", "13px")
+    .style("opacity", 0);
 
-  const svgSize = 400;
-  const margin = { top: 40, right: 20, bottom: 80, left: 20 };
-  const gridSize = 10;
-  const cell = (svgSize - margin.left - margin.right) / gridSize;
-
-  const svg = container.append("svg")
-    .attr("width", svgSize)
-    .attr("height", svgSize + 120)
-    .attr("viewBox", `0 0 ${svgSize} ${svgSize + 120}`);
-
-  const g = svg.append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  const color = d3.scaleOrdinal()
-    .domain(["Battle-related deaths", "One-sided violence", "Non-state conflict", "Intrastate conflict"])
-    .range(["#e85d04", "#ffba08", "#4361ee", "#4895ef"]);
-
-  // Legend group
-  const legend = svg.append("g")
-    .attr("class", "waffle-legend")
-    .attr("transform", `translate(${margin.left},${svgSize - 10})`);
-
-  // Function to draw waffle
-  function draw(region = "World") {
-    const row = data.find(d => d.Entity === region);
-    if (!row) return;
-
-    const categories = [
-      { key: "Battle-related deaths", value: +row["Battle-related deaths"] },
-      { key: "One-sided violence", value: +row["One-sided violence"] },
-      { key: "Non-state conflict", value: +row["Non-state conflict"] },
-      { key: "Intrastate conflict", value: +row["Intrastate conflict"] },
-    ];
-
-    const total = d3.sum(categories, d => d.value);
-    categories.forEach(d => {
-      d.percentage = (d.value / total) * 100;
-      d.displayValue = d3.format(",")(Math.round(d.value));
-    });
-
-    // Generate waffle squares
-    let squares = [];
-    let start = 0;
-    categories.forEach(cat => {
-      const count = Math.round(cat.percentage);
-      for (let i = start; i < start + count; i++) {
-        squares.push({ category: cat.key });
-      }
-      start += count;
-    });
-
-    // Bind data
-    const rects = g.selectAll(".waffle-square").data(squares, (d, i) => i);
-
-    // EXIT
-    rects.exit()
-      .transition().duration(300)
-      .style("opacity", 0)
-      .remove();
-
-    // UPDATE + ENTER
-    rects.enter()
-      .append("rect")
-      .attr("class", "waffle-square")
-      .attr("rx", 4)
-      .attr("width", cell - 3)
-      .attr("height", cell - 3)
-      .attr("x", (d, i) => (i % gridSize) * cell)
-      .attr("y", (d, i) => Math.floor(i / gridSize) * cell)
-      .attr("fill", d => color(d.category))
-      .style("opacity", 0)
-      .transition()
-      .delay((d, i) => i * 10)
-      .duration(600)
-      .style("opacity", 1);
-
-    // Tooltip interactivity
-    g.selectAll(".waffle-square")
-      .on("mousemove", (event, d) => {
-        const c = categories.find(c => c.key === d.category);
-        tooltip.transition().duration(100).style("opacity", 1);
-        tooltip.html(
-          `<strong>${c.key}</strong><br>${Math.round(c.percentage)}%<br>${c.displayValue} deaths`
-        )
-          .style("left", (event.pageX + 12) + "px")
-          .style("top", (event.pageY - 28) + "px");
-      })
-      .on("mouseout", () => tooltip.transition().duration(200).style("opacity", 0));
-
-    // Legend update
-    const legendItems = legend.selectAll(".legend-item")
-      .data(categories, d => d.key);
-
-    const legendEnter = legendItems.enter()
-      .append("g")
-      .attr("class", "legend-item")
-      .attr("transform", (d, i) => `translate(${i * 120},0)`);
-
-    legendEnter.append("rect")
-      .attr("width", 16)
-      .attr("height", 16)
-      .attr("rx", 3)
-      .attr("fill", d => color(d.key));
-
-    legendEnter.append("text")
-      .attr("x", 24)
-      .attr("y", 13)
-      .attr("fill", "#333")
-      .attr("font-size", "13px")
-      .text(d => d.key);
-
-    legendItems.select("rect").transition().attr("fill", d => color(d.key));
-
-    // Summary text
-    d3.select("#waffle-summary").html(
-      `<strong>${region}</strong> — ${d3.format(",")(Math.round(total))} total deaths across all recorded conflicts.`
-    );
+  // --- Helper: Flexible region matching ---
+  function getRow(region) {
+    const lower = region.toLowerCase();
+    return data.find(d => (d.Entity || "").trim().toLowerCase().includes(lower));
   }
 
-  // Initial draw
-  draw("World");
+  // --- Helper: Auto-detect column names ---
+  function extractCategories(row) {
+    const cols = Object.keys(row);
+    const findCol = (pattern) =>
+      cols.find(c => c.toLowerCase().includes(pattern.toLowerCase())) || null;
 
-  // Update on dropdown change
-  select.on("change", (event) => {
-    const region = event.target.value;
-    draw(region);
-  });
+    return [
+      { key: "Intrastate", col: findCol("intrastate") },
+      { key: "One-sided", col: findCol("one-sided") },
+      { key: "Non-state", col: findCol("non-state") },
+      { key: "Interstate", col: findCol("interstate") }
+    ].map(d => ({
+      key: d.key,
+      value: d.col ? +row[d.col] || 0 : 0
+    }));
+  }
+
+  // --- Helper: Convert values into 100-grid representation ---
+  function computeSquares(categories) {
+    const total = d3.sum(categories, d => d.value) || 1;
+    categories.forEach(d => {
+      const raw = (d.value / total) * 100;
+      d.floor = Math.floor(raw);
+      d.frac = raw - d.floor;
+    });
+
+    let allocated = d3.sum(categories, d => d.floor);
+    let remaining = totalSquares - allocated;
+    const byFrac = [...categories].sort((a, b) => d3.descending(a.frac, b.frac));
+    for (let i = 0; i < remaining; i++) byFrac[i % byFrac.length].floor += 1;
+
+    const squares = [];
+    categories.forEach(cat => {
+      for (let i = 0; i < cat.floor; i++) squares.push({ category: cat.key });
+    });
+    return squares.slice(0, totalSquares);
+  }
+
+  // --- Draw function ---
+  function draw(region = "World") {
+    const row = getRow(region);
+    if (!row) {
+      summaryWrap.html(`<em>No data available for ${region}.</em>`);
+      g.selectAll(".waffle-square").remove();
+      legendWrap.html("");
+      return;
+    }
+
+    const cats = extractCategories(row);
+    const total = d3.sum(cats, d => d.value) || 1;
+    cats.forEach(c => {
+      c.percent = (c.value / total) * 100;
+      c.displayValue = d3.format(",")(Math.round(c.value));
+    });
+
+    const squares = computeSquares(cats);
+    const rects = g.selectAll(".waffle-square").data(squares);
+
+    rects.exit().transition().duration(200).style("opacity", 0).remove();
+
+    rects.enter()
+      .append("rect")
+      .attr("class", d => `waffle-square cat-${d.category.replace(/\s+/g, '')}`)
+      .attr("width", cell - 2)
+      .attr("height", cell - 2)
+      .attr("rx", 3)
+      .attr("x", (d, i) => (i % gridCols) * cell + 1)
+      .attr("y", (d, i) => Math.floor(i / gridCols) * cell + 1)
+      .attr("fill", d => color(d.category))
+      .style("opacity", 0)
+      .transition().delay((d, i) => i * 5).duration(300).style("opacity", 1);
+
+    rects.transition().duration(300).attr("fill", d => color(d.category));
+
+    g.selectAll(".waffle-square")
+      .on("mouseenter", function (event, d) {
+        const cat = cats.find(c => c.key === d.category);
+        tt.transition().duration(80).style("opacity", 1);
+        tt.html(`<strong>${cat.key}</strong><br>${Math.round(cat.percent)}%<br>${cat.displayValue} deaths`)
+          .style("left", (event.pageX + 12) + "px")
+          .style("top", (event.pageY - 28) + "px");
+
+        g.selectAll(".waffle-square")
+          .transition().duration(120)
+          .style("opacity", s => s.category === d.category ? 1 : 0.2)
+          .style("stroke", s => s.category === d.category ? "#000" : "none");
+      })
+      .on("mousemove", event => {
+        tt.style("left", (event.pageX + 12) + "px").style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseleave", () => {
+        tt.transition().duration(100).style("opacity", 0);
+        g.selectAll(".waffle-square").transition().duration(120).style("opacity", 1).style("stroke", "none");
+      });
+
+    // --- Legend ---
+    legendWrap.html("");
+    const legendDiv = legendWrap.append("div").attr("class", "waffle-legend-inner")
+      .style("text-align", "center");
+    const li = legendDiv.selectAll(".legend-item").data(cats).join("div")
+      .attr("class", "legend-item")
+      .style("display", "inline-flex")
+      .style("align-items", "center")
+      .style("gap", "8px")
+      .style("margin", "6px 12px");
+
+    li.append("span")
+      .style("width", "18px")
+      .style("height", "18px")
+      .style("border-radius", "4px")
+      .style("display", "inline-block")
+      .style("background", d => color(d.key));
+
+    li.append("span")
+      .style("font-size", "0.9rem")
+      // --- FIX 3: This also now correctly finds 'colors.secondary' ---
+      .style("color", colors.secondary)
+      .html(d => `${d.key} — ${Math.round(d.percent)}% (${d.displayValue})`);
+
+    summaryWrap.html(`<strong>${region}</strong> — ${d3.format(",")(Math.round(total))} total deaths across all recorded conflicts.`);
+  }
+
+  draw("World");
+  select.on("change", e => draw(e.target.value));
 });
+
+// ------------------------------------------------------
+// PLACEHOLDER GRAPHS (NEW CODE)
+// ------------------------------------------------------
+
+/**
+ * Creates a placeholder "Coming Soon" message inside an SVG
+ * in the specified container.
+ * @param {string} containerId - The CSS selector for the chart container (e.g., "#bar-chart-container")
+ * @param {string} [text="Chart Coming Soon..."] - The text to display
+ */
+function createPlaceholder(containerId, text = "Chart Coming Soon...") {
+  // Use the global svgWidth and svgHeight constants
+  const svg = d3.select(containerId)
+    .append("svg")
+    .attr("viewBox", `0 0 ${svgWidth} ${svgHeight}`)
+    .style("width", "100%")
+    .style("height", "auto")
+    .style("background-color", "#f9f9f9")
+    .style("border", "1px dashed #ccc");
+
+  svg.append("text")
+    .attr("x", svgWidth / 2)
+    .attr("y", svgHeight / 2)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .style("font-size", "24px")
+    .style("fill", "#888")
+    .style("font-family", "Fira Sans, sans-serif") // Match your site's font
+    .style("font-weight", "500")
+    .text(text);
+}
+
+// --- 1. Bar Chart ---
+createPlaceholder("#bar-chart-container");
+
+// --- 2. Grouped Bar Chart ---
+createPlaceholder("#grouped-bar-chart-container");
+
+// --- 4. 100% Stacked Bar Chart ---
+createPlaceholder("#stacked-bar-chart-container");
+
+// --- 6. Circle Packing ---
+createPlaceholder("#circle-packing-container");
+
+// --- 7. Dumbbell Plot ---
+createPlaceholder("#dumbbell-plot-container");
+
+// --- 8. Stacked Bar (Small Multiples) ---
+createPlaceholder("#small-multiples-container");
