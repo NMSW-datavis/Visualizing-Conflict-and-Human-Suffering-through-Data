@@ -581,16 +581,496 @@ function createPlaceholder(containerId, text = "Chart Coming Soon...") {
 createPlaceholder("#bar-chart-container");
 
 // --- 2. Grouped Bar Chart ---
-createPlaceholder("#grouped-bar-chart-container");
+// createPlaceholder("#grouped-bar-chart-container");
 
 // --- 4. 100% Stacked Bar Chart ---
 createPlaceholder("#stacked-bar-chart-container");
 
 // --- 6. Circle Packing ---
-createPlaceholder("#circle-packing-container");
+// createPlaceholder("#circle-packing-container");
 
 // --- 7. Dumbbell Plot ---
 createPlaceholder("#dumbbell-plot-container");
 
 // --- 8. Stacked Bar (Small Multiples) ---
 createPlaceholder("#small-multiples-container");
+
+
+
+/* ===================Start CHART 2,6 –  =================== */
+/* =================== CONFIG + HELPERS =================== */
+
+const DATA_FILE_1 = "./data/acled_conflict_index_fullyear2024_allcolumns-2.csv";
+const DATA_FILE_3 = "./data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv";
+
+// robust parsers
+const num = v => {
+  if (v == null) return 0;
+  const n = +v.toString().trim().replace(/,/g, "");
+  return Number.isFinite(n) ? n : 0;
+};
+const str = v => (v == null ? "" : v.toString().trim());
+
+/* Colors for ACLED metrics (consistent across charts) */
+const metricColors = d3.scaleOrdinal()
+  .domain(["Deadliness", "Diffusion", "Danger", "Fragmentation"])
+  .range(["#2a76b9", "#f08e39", "#7b6ce0", "#4caf50"]);
+
+const fmtInt = d3.format(","), fmtPct = d3.format(".0%"), fmt12 = d3.format(".2f");
+
+/* ---------- Tooltip factory (scoped to nearest card) ---------- */
+function makeTooltip(containerSel) {
+  const card = containerSel.node().closest(".chart-section") || containerSel.node();
+  // position: relative is set on .chart-card in the CSS
+  const root = d3.select(card);
+  root.style("position", "relative");
+  let tip = root.select(".viz-tooltip");
+  if (tip.empty()) tip = root.append("div").attr("class", "viz-tooltip");
+  return tip;
+}
+
+// *** HELPER FUNCTION for font contrast ***
+function getContrastColor(hexColor) {
+  if (!hexColor) return "#000000"; // Default to black
+  const color = d3.color(hexColor);
+  if (!color) return "#000000";
+
+  // Calculate luminance (simple formula)
+  const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
+
+  // 128 is the midpoint (0-255). If luminance is high, use black text.
+  return luminance > 128 ? "#000000" : "#FFFFFF";
+}
+
+/* ---------- Legend helpers ---------- */
+// --- MODIFIED to support horizontal layout ---
+function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap = 20) {
+  const g = svg.append("g").attr("transform", `translate(${x},${y})`).attr("class", "legend");
+
+  const row = g.selectAll("g.l").data(items).join("g")
+    .attr("class", "l");
+
+  row.append("rect").attr("width", 12).attr("height", 12).attr("rx", 2).attr("fill", d => color(d));
+  row.append("text").attr("x", 16).attr("y", 10).text(d => d);
+
+  if (horizontal) {
+    // New horizontal logic: position items side-by-side
+    let cumulativeWidth = 0;
+    row.attr("transform", function (d, i) {
+      const currentWidth = this.getBBox().width;
+      const xPos = cumulativeWidth;
+      cumulativeWidth += currentWidth + itemGap; // 'itemGap' is space *between* items
+      return `translate(${xPos}, 0)`;
+    });
+  } else {
+    // Original vertical logic
+    row.attr("transform", (d, i) => `translate(0,${i * itemGap})`);
+  }
+
+  return g;
+}
+
+// Global data variables
+let A1 = [], A3 = [];
+
+/* =================== CHART 2 – Grouped Bar (Top3 Dimensions) =================== */
+function drawChart2() {
+  const top3 = A1.filter(d => d.IndexLevel.toLowerCase() === "extreme")
+    .sort((a, b) => b.TotalScore - a.TotalScore).slice(0, 3).map(d => d.Country);
+
+  const melted = [];
+  A1.filter(d => top3.includes(d.Country)).forEach(row => {
+    ["Deadliness", "Diffusion", "Danger", "Fragmentation"].forEach(m => {
+      melted.push({ Country: row.Country, Metric: m, Value: row[m] });
+    });
+  });
+
+  const el = d3.select("#grouped-bar-chart-container"); const tip = makeTooltip(el);
+
+  // Use fixed dimensions for viewBox for responsive sizing
+  const W = 720, H = 420;
+  const m = { t: 46, r: 20, b: 60, l: 60 }, w = W - m.l - m.r, h = H - m.t - m.b;
+
+  const svg = el.append("svg")
+    .attr("viewBox", `0 0 ${W} ${H}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+
+  const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
+
+  const x0 = d3.scaleBand().domain(top3).range([0, w]).padding(0.2);
+  const x1 = d3.scaleBand().domain(metricColors.domain()).range([0, x0.bandwidth()]).padding(0.05);
+  const y = d3.scaleLinear().domain([0, 1]).range([h, 0]);
+
+  g.append("g").attr("transform", `translate(0,${h})`).attr("class", "axis").call(d3.axisBottom(x0));
+  g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+
+  // Refactored to use CSS class for default opacity and transition
+  const rects = g.selectAll("rect").data(melted).join("rect")
+    .attr("class", "grouped-bar-rect") // Apply default opacity/transition from CSS
+    .attr("x", d => x0(d.Country) + x1(d.Metric))
+    .attr("y", d => y(d.Value))
+    .attr("width", x1.bandwidth())
+    .attr("height", d => h - y(d.Value))
+    .attr("fill", d => metricColors(d.Metric)); // fill must be inline/D3
+
+  // --- Legend call: Positioned at x=m.l (60), y=18 (top of SVG area) ---
+  addDiscreteLegend(svg, metricColors.domain(), metricColors, m.l, 18, true, 24);
+
+  // Use .classed() for hover interaction
+  rects.on("mouseenter", (ev, d) => {
+    // Highlight all bars for this country
+    rects.interrupt()
+      .classed("fade", true)
+      .classed("highlight", false);
+
+    rects.filter(r => r.Country === d.Country)
+      .interrupt()
+      .classed("fade", false)
+      .classed("highlight", true);
+
+    tip.style("display", "block").style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px")
+      .html(`<b>${d.Country}</b><br>${d.Metric}: ${fmt12(d.Value)}`);
+  })
+    .on("mousemove", ev => tip.style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px"))
+    .on("mouseleave", () => {
+      rects.interrupt()
+        .classed("fade", false)
+        .classed("highlight", false); // Reset all to default opacity
+      tip.style("display", "none");
+    });
+}
+
+/* =================== CHART 6 – Circle Packing (Fully Dynamic) =================== */
+
+function drawCirclePacking() {
+
+  // *** Process data, keeping all metrics ***
+  const allItems = A3.filter(d => d.Code !== "" && d.Entity !== "World")
+    .map(d => ({
+      name: d.Entity,
+      value: d.deaths_intrastate + d.deaths_onesided + d.deaths_nonstate + d.deaths_interstate,
+      deaths_intrastate: d.deaths_intrastate,
+      deaths_onesided: d.deaths_onesided,
+      deaths_nonstate: d.deaths_nonstate,
+      // Store the "total" value separately for tooltips
+      total_deaths: d.deaths_intrastate + d.deaths_onesided + d.deaths_nonstate + d.deaths_interstate
+    }));
+
+  const el = d3.select("#circle-packing-container"); const tip = makeTooltip(el);
+  const W = 980, H = 560, legendW = 280;
+  const svg = el.append("svg").attr("viewBox", `0 0 ${W} ${H}`);
+
+  // === 1. SETUP STATIC ELEMENTS (Background, Main 'g') ===
+  svg.append("rect")
+    .attr("class", "svg-background")
+    .attr("width", W - legendW)
+    .attr("height", H);
+
+  const g = svg.append("g");
+
+  const legG = svg.append("g")
+    .attr("transform", `translate(${W - legendW + 10}, 30)`);
+
+  let activeCategory = null;
+  let circles;
+  let labels;
+  let legendItems;
+  let getCategory;
+  let importantNames = new Set();
+
+  // === 2. DEFINE UPDATE FUNCTIONS (updatePack, updateFilter) ===
+
+  /**
+   * Main function to re-calculate and re-draw everything
+   */
+  function updatePack(metricKey) {
+
+    // 1. Filter items: Only include items where the *current metric* is > 0
+    const items = allItems.filter(d => d[metricKey] > 0);
+
+    // 2. Calculate dynamic thresholds *for the current metric*
+    const values = items.map(d => d[metricKey]).sort(d3.ascending);
+    const thresholdMed = d3.quantile(values, 0.33) || 0;
+    const thresholdHigh = d3.quantile(values, 0.66) || 0;
+
+    // 3. Create dynamic color scales *for the current metric*
+    const interpBrown = d3.interpolateRgb("#D2B48C", "#8B4513");
+    const interpOrange = d3.interpolateRgb("#FFB74D", "#E65100");
+    const interpBlue = d3.interpolateRgb("#64B5F6", "#0D47A1");
+
+    getCategory = (value) => {
+      if (value >= thresholdHigh) return "high";
+      if (value >= thresholdMed) return "medium";
+      return "low";
+    };
+
+    const highItems = items.filter(d => getCategory(d[metricKey]) === 'high');
+    const medItems = items.filter(d => getCategory(d[metricKey]) === 'medium');
+    const lowItems = items.filter(d => getCategory(d[metricKey]) === 'low');
+
+    const colorHigh = d3.scaleSequential(interpBrown)
+      .domain([d3.min(highItems, d => d[metricKey]) || thresholdHigh, d3.max(highItems, d => d[metricKey]) || thresholdHigh]);
+    const colorMedium = d3.scaleSequential(interpOrange)
+      .domain([d3.min(medItems, d => d[metricKey]) || thresholdMed, d3.max(medItems, d => d[metricKey]) || thresholdHigh]);
+    const colorLow = d3.scaleSequential(interpBlue)
+      .domain([d3.min(lowItems, d => d[metricKey]) || 1, d3.max(lowItems, d => d[metricKey]) || thresholdMed]);
+
+    const getColor = (val) => {
+      if (val >= thresholdHigh) return colorHigh(val);
+      if (val >= thresholdMed) return colorMedium(val);
+      return colorLow(val);
+    };
+
+
+    // 4. Create dynamic size scale
+    const maxVal = d3.max(items, d => d[metricKey]);
+    const sizeScale = d3.scaleSqrt().domain([0, maxVal]).range([0, 1000]);
+
+
+    // =================================================================
+    // *** Find Top N per category for labeling ***
+    // =================================================================
+    const N_IMPORTANT = 5;
+    importantNames.clear();
+
+    highItems
+      .sort((a, b) => b[metricKey] - a[metricKey])
+      .slice(0, N_IMPORTANT)
+      .forEach(d => importantNames.add(d.name));
+
+    medItems
+      .sort((a, b) => b[metricKey] - a[metricKey])
+      .slice(0, N_IMPORTANT)
+      .forEach(d => importantNames.add(d.name));
+
+    lowItems
+      .sort((a, b) => b[metricKey] - a[metricKey])
+      .slice(0, N_IMPORTANT)
+      .forEach(d => importantNames.add(d.name));
+    // =================================================================
+
+
+    // 5. Create new packing layout
+    const pack = d3.pack().size([W - legendW, H]).padding(3);
+    const root = d3.hierarchy({ children: items })
+      .sum(d => sizeScale(d[metricKey]));
+    const nodes = pack(root).leaves();
+
+    // 6. D3 Join Pattern (Enter/Update/Exit)
+    const node = g.selectAll("g.node")
+      .data(nodes, d => d.data.name);
+
+    // *** EXIT ***
+    const nodeExit = node.exit()
+      .transition().duration(600);
+    nodeExit.select("circle")
+      .attr("r", 0);
+    nodeExit.select("text")
+      .style("opacity", 0);
+    nodeExit.remove();
+
+    // *** ENTER ***
+    const nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+    // Use CSS for stroke/stroke-width (no inline styles here)
+    nodeEnter.append("circle")
+      .attr("r", 0);
+
+    nodeEnter.append("text")
+      .attr("class", "circle-pack-label")
+      .attr("dy", ".35em")
+      .text(d => d.data.name);
+
+    // *** MERGE (Enter + Update) ***
+    const nodeMerge = node.merge(nodeEnter);
+
+    // 7. Update attributes for all nodes (new and existing)
+    nodeMerge
+      .interrupt()
+      .transition().duration(750)
+      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+    // Update circle selection
+    circles = nodeMerge.select("circle")
+      .interrupt()
+      .transition().duration(750)
+      .attr("r", d => d.r)
+      .attr("fill", d => getColor(d.data[metricKey])); // fill must be inline
+
+    // Update label selection
+    labels = nodeMerge.select("text")
+      .interrupt()
+      .transition().duration(750)
+      .style("opacity", 1)
+      // The following must remain inline due to dynamic data dependence:
+      .style("font-size", d => Math.max(9, Math.min(13, d.r / 3.5)) + "px")
+      .style("fill", d => getContrastColor(getColor(d.data[metricKey])))
+      .style("text-shadow", d => (getContrastColor(getColor(d.data[metricKey])) === "#FFFFFF") ? "0 1px 3px rgba(0,0,0,0.8)" : "none")
+      .each(function (d) {
+        const fits = this.getComputedTextLength() < d.r * 1.7;
+        const isImportant = importantNames.has(d.data.name);
+        d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
+      });
+
+    // 8. Re-apply listeners
+    nodeMerge.select("circle")
+      .on("mouseenter", function (ev, d) {
+        d3.select(this.parentNode).raise();
+        const isLegendActive = g.classed("legend-active");
+        tip.style("display", "block").style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px")
+          .html(`<b>${d.data.name}</b><br>
+                        Total: ${fmtInt(d.data.total_deaths)}<br>
+                        ${metricKey}: ${fmtInt(d.data[metricKey])}`);
+        if (isLegendActive) return;
+
+        // Use D3 transitions for opacity fade on non-hovered circles
+        circles.interrupt().transition().duration(140).style("opacity", c => c === d ? 1 : 0.2);
+        labels.interrupt().transition().duration(140).style("opacity", c => c === d ? 1 : 0.15);
+      })
+      .on("mousemove", ev => tip.style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px"))
+      .on("mouseleave", function (ev, d) {
+        tip.style("display", "none");
+        const isLegendActive = g.classed("legend-active");
+        if (isLegendActive) return;
+
+        // Reset opacity using D3 transition
+        circles.interrupt().transition().duration(140).style("opacity", 0.9);
+        labels.interrupt().transition().duration(140).style("opacity", 1)
+          .each(function (d) {
+            const fits = this.getComputedTextLength() < d.r * 1.7;
+            const isImportant = importantNames.has(d.data.name);
+            d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
+          });
+      });
+
+    // 9. Update Legend (Remove old, draw new)
+    legG.selectAll("*").remove();
+
+    legG.append("text")
+      .attr("class", "legend-title").attr("x", 0).attr("y", 0)
+      .text("Death Toll Categories");
+
+    const legendData = [
+      { label: `High (≥${fmtInt(thresholdHigh)})`, color: interpBrown(1), y: 25, category: "high" },
+      { label: `Medium (${fmtInt(thresholdMed)}–${fmtInt(thresholdHigh)})`, color: interpOrange(1), y: 50, category: "medium" },
+      { label: `Low (<${fmtInt(thresholdMed)})`, color: interpBlue(1), y: 75, category: "low" }
+    ];
+
+    legendItems = legG.selectAll("g.legend-item")
+      .data(legendData)
+      .join("g")
+      .attr("class", "legend-item-interactive")
+      .attr("transform", d => `translate(0, ${d.y})`)
+      .attr("opacity", 1);
+
+    legendItems.append("circle")
+      .attr("cx", 8).attr("cy", 0).attr("r", 8)
+      .attr("fill", d => d.color).attr("opacity", 0.9);
+
+    legendItems.append("text")
+      .attr("x", 24).attr("y", 4)
+      .text(d => d.label);
+
+    // 10. Re-bind legend listeners
+
+    svg.select(".svg-background").on("click", function () {
+      activeCategory = null;
+      updateFilter(metricKey);
+    });
+
+    // 11. Re-apply legend filter (if any)
+    updateFilter(metricKey);
+  }
+
+  /**
+   * Function to filter circles based on legend clicks
+   */
+  function updateFilter(metricKey) {
+    if (!circles || !labels) return;
+
+    if (activeCategory === null) {
+      // No category is active, reset everything
+      g.classed("legend-active", false);
+      legendItems.transition().duration(200).attr("opacity", 1.0);
+      circles.transition().duration(200)
+        .attr("opacity", 0.9)
+        .style("pointer-events", "all");
+
+      labels.transition().duration(200)
+        .style("opacity", 1)
+        .each(function (d) {
+          const fits = this.getComputedTextLength() < d.r * 1.7;
+          const isImportant = importantNames.has(d.data.name);
+          d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
+        });
+
+    } else {
+      // A category is active, apply filter
+      g.classed("legend-active", true);
+
+      legendItems.transition().duration(200)
+        .attr("opacity", item => (item.category === activeCategory) ? 1.0 : 0.3);
+
+      circles.transition().duration(200)
+        .attr("opacity", c => {
+          const circleCategory = getCategory(c.data[metricKey]);
+          // Note: Opacity set to 0.9 (default) or 0 (faded) for filtering, not hover.
+          return (circleCategory === activeCategory) ? 0.9 : 0;
+        })
+        .style("pointer-events", c => {
+          const circleCategory = getCategory(c.data[metricKey]);
+          return (circleCategory === activeCategory) ? "all" : "none";
+        });
+
+      labels.transition().duration(200)
+        .style("opacity", c => {
+          const circleCategory = getCategory(c.data[metricKey]);
+          const isImportant = importantNames.has(c.data.name);
+          return (circleCategory === activeCategory && isImportant) ? 1 : 0;
+        });
+    }
+  }
+
+
+  // === 3. BIND EVENT LISTENERS (Initial) ===
+
+  d3.selectAll("#chart-6-controls input[name='metric-toggle']")
+    .on("change", function () {
+      updatePack(this.value);
+    });
+
+  // === 4. INITIAL DRAW ===
+  updatePack("value");
+}
+
+
+/* =================== LOAD DATA & DRAW =================== */
+
+Promise.all([
+  d3.csv(DATA_FILE_1, d => ({
+    Country: str(d.Country), IndexLevel: str(d["Index Level"]), TotalScore: num(d["Total Score"]),
+    Deadliness: num(d["Deadliness Value Scaled"]), Diffusion: num(d["Diffusion Value Scaled"]),
+    Danger: num(d["Danger Value Scaled"]), Fragmentation: num(d["Fragmentation Value Scaled"])
+  })),
+  d3.csv(DATA_FILE_3, d => ({
+    Entity: str(d.Entity), Code: str(d.Code),
+    deaths_intrastate: num(d["Cumulative deaths in intrastate conflicts"]),
+    deaths_onesided: num(d["Cumulative deaths from one-sided violence"]),
+    deaths_nonstate: num(d["Cumulative deaths in non-state conflicts"]),
+    deaths_interstate: num(d["Cumulative deaths in interstate conflicts"])
+  }))
+]).then(([acled, cum]) => {
+  A1 = acled;
+  A3 = cum;
+
+  drawChart2();
+  drawCirclePacking();
+
+}).catch(e => console.error("Data load error:", e));
+
+/* =================== EndCHART 2,6 –  =================== */
+
+/* =================== EndCHART 2,6 –  =================== */
