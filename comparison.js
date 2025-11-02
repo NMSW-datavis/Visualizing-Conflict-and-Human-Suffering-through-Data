@@ -578,14 +578,249 @@ function createPlaceholder(containerId, text = "Chart Coming Soon...") {
 }
 
 // --- 1. Bar Chart ---
-createPlaceholder("#bar-chart-container");
+//createPlaceholder("#bar-chart-container");
+
+async function drawBarChart() {
+  // Load CSV
+  const data = await d3.csv("data/acled_conflict_index_fullyear2024_allcolumns-2.csv", d3.autoType);
+  console.log("Data loaded:", data);
+
+  // Filter and sort
+  const extreme = data
+    .filter(d => d["Index Level"] === "Extreme")
+    .sort((a, b) => d3.descending(a["Total Score"], b["Total Score"]))
+    .slice(0, 10);
+
+  if (extreme.length === 0) {
+    console.error("No data with Index Level = 'Extreme' found.");
+    return;
+  }
+
+  // Dimensions
+  const margin = { top: 40, right: 40, bottom: 40, left: 140 };
+  const width = 824;
+  const barHeight = 28;
+  const height = extreme.length * barHeight + margin.top + margin.bottom;
+
+  // Scales
+  const x = d3.scaleLinear()
+    .domain([0, d3.max(extreme, d => d["Total Score"])])
+    .nice()
+    .range([margin.left, width - margin.right]);
+
+  const y = d3.scaleBand()
+    .domain(extreme.map(d => d.Country))
+    .range([margin.top, height - margin.bottom])
+    .padding(0.15);
+
+  const color = d3.scaleSequential()
+    .domain([0, d3.max(extreme, d => d["Total Score"])])
+    .interpolator(d3.interpolateInferno);
+
+  // SVG container
+  const svg = d3.select("#bar-chart-container")
+    .append("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .style("max-width", "100%")
+    .style("height", "auto")
+    .style("font-family", "sans-serif");
+
+  // Tooltip
+const tooltip = d3.select("body").append("div").attr("class", "tooltip-style");
+
+  // Bars
+  svg.selectAll("rect")
+  .data(extreme)
+  .join("rect")
+    .attr("x", x(0))
+    .attr("y", d => y(d.Country))
+    .attr("width", 0)
+    .attr("height", y.bandwidth())
+    .attr("fill", d => color(d["Total Score"]))
+    .on("mouseover", (event, d) => {
+      tooltip.style("display", "block")
+             .style("opacity", 1);
+    })
+    .on("mousemove", (event, d) => {
+      tooltip.html(`<strong>${d.Country}</strong><br>
+                    Total Score: ${d["Total Score"]}<br>
+                    Deadliness: ${d["Deadliness Value Scaled"]}<br>
+                    Danger: ${d["Danger Value Scaled"]}`)
+             .style("left", (event.pageX + 15) + "px")
+             .style("top", (event.pageY - 30) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.style("opacity", 0);
+    })
+    .transition()
+      .duration(1200)
+      .delay((_, i) => i * 80)
+      .attr("width", d => x(d["Total Score"]) - x(0))
+    .transition()
+      .duration(1200)
+      .delay((_, i) => i * 80)
+      .attr("width", d => x(d["Total Score"]) - x(0));
+
+  // Country labels
+  svg.append("g")
+    .selectAll("text")
+    .data(extreme)
+    .join("text")
+      .attr("x", margin.left - 10)
+      .attr("y", d => y(d.Country) + y.bandwidth() / 2)
+      .attr("text-anchor", "end")
+      .attr("dominant-baseline", "middle")
+      .attr("fill", "#333")
+      .attr("font-size", "12px")
+      .text(d => d.Country);
+
+  // X axis
+  svg.append("g")
+    .attr("transform", `translate(0,${margin.top})`)
+    .call(d3.axisTop(x).ticks(6))
+    .call(g => g.select(".domain").remove());
+}
+
+drawBarChart();
 
 // --- 2. Grouped Bar Chart ---
 // createPlaceholder("#grouped-bar-chart-container");
 
 // --- 4. 100% Stacked Bar Chart ---
-createPlaceholder("#stacked-bar-chart-container");
+//createPlaceholder("#stacked-bar-chart-container");
+function createStackedBarChart() {
+  const containerId = "#stacked-bar-chart-container";
+  d3.select(containerId).selectAll("*").remove();
 
+  // Provided data
+  let data = [{"region": "Africa", "interstate": 4.873744458230269, "intrastate": 37.15396043907412, "non-state": 6.5125672717502106, "one-sided": 51.459727830945404}, 
+    {"region": "Americas", "interstate": 0.40905123562132795, "intrastate": 17.35037279244775, "non-state": 71.21790445917955, "one-sided": 11.022671512751367}, 
+    {"region": "Asia and Oceania", "interstate": 0.8125299227139047, "intrastate": 86.70713357499487, "non-state": 3.5454141303604407, "one-sided": 8.934922371930783}, 
+    {"region": "Czechoslovakia", "interstate": NaN, "intrastate": NaN, "non-state": NaN, "one-sided": NaN}, 
+    {"region": "Europe", "interstate": 65.09756523374026, "intrastate": 28.568013644360285, "non-state": 0.7281468648859165, "one-sided": 5.606274257013551},
+    {"region": "Kosovo", "interstate": 0.0, "intrastate": 63.87665198237885, "non-state": 0.0, "one-sided": 36.12334801762114},
+    {"region": "Middle East", "interstate": 4.53215009647467, "intrastate": 80.81735290225062, "non-state": 8.707239431321877, "one-sided": 5.943257569952842}, 
+    {"region": "World", "interstate": 9.650922561619677, "intrastate": 50.52977538968817, "non-state": 9.715555693530046, "one-sided": 30.103746355162116}, 
+    {"region": "Yemen People's Republic", "interstate": NaN, "intrastate": NaN, "non-state": NaN, "one-sided": NaN}, 
+    {"region": "Yugoslavia", "interstate": NaN, "intrastate": NaN, "non-state": NaN, "one-sided": NaN}];
+
+  // Filter valid regions (remove those with NaN and 'World', 'Kosovo' as it's country-specific)
+  data = data.filter(d => !isNaN(d.interstate) && d.region !== 'World' && d.region !== 'Kosovo');
+
+  // Flatten the data: {region, type, value}
+  const flatData = [];
+  data.forEach(d => {
+    Object.keys(d).forEach(k => {
+      if (k !== 'region') {
+        flatData.push({region: d.region, type: k, value: d[k]});
+      }
+    });
+  });
+
+  // Determine the series that need to be stacked.
+  const series = d3.stack()
+    .keys(d3.union(flatData.map(d => d.type))) 
+    .value(([, D], key) => D.get(key)?.value || 0) 
+    .offset(d3.stackOffsetExpand)
+  (d3.index(flatData, d => d.region, d => d.type)); 
+
+  // Specify the chart’s dimensions (except for the height).
+  const width = 928;
+  const marginTop = 80;
+  const marginRight = 200;
+  const marginBottom = 0;
+  const marginLeft = 100; 
+
+  // Compute the height from the number of stacks.
+  const height = series[0].length * 40 + marginTop + marginBottom;
+
+  // Prepare the scales for positional and color encodings.
+  const x = d3.scaleLinear()
+    .domain([0, 1]) 
+    .range([marginLeft, width - marginRight]);
+
+  const y = d3.scaleBand()
+    .domain(d3.groupSort(flatData, (D) => -D.find(d => d.type === "one-sided")?.value / d3.sum(D, d => d.value), d => d.region))
+    .range([marginTop, height - marginBottom])
+    .padding(0.08);
+
+  const color = d3.scaleOrdinal()
+    .domain(['interstate', 'intrastate', 'non-state', 'one-sided'])
+    .range(['#084C61', '#DB504A', '#E3B505', '#56A3A6' ]);
+
+  // Create the SVG container.
+  const svg = d3.select(containerId)
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .style("max-width", "100%")
+    .style("height", "auto");
+
+  
+  svg.append("g")
+    .selectAll()
+    .data(series)
+    .join("g")
+      .attr("fill", d => color(d.key))
+    .selectAll("rect")
+    .data(D => D.map(d => (d.key = D.key, d)))
+    .join("rect")
+      .attr("x", marginLeft)
+      .attr("y", d => y(d.data[0]))
+      .attr("height", y.bandwidth())
+      .attr("width", 0)
+      .transition()
+      .duration(1000)
+      .attr("x", d => x(d[0]))
+      .attr("width", d => x(d[1]) - x(d[0]));
+
+  //  tooltip
+  const tooltipStacked = d3.select("body").append("div").attr("class", "stacked-tooltip").style("opacity", 0);
+  svg.selectAll("rect")
+    .on("mouseover", (event, d) => {
+      tooltipStacked.transition().duration(200).style("opacity", 0.9);
+      tooltipStacked.html(`${d.data[0]}<br>${d.key}: ${((d[1] - d[0]) * 100).toFixed(1)}%`)
+        .style("left", (event.pageX + 5) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", () => tooltipStacked.transition().duration(300).style("opacity", 0));
+
+  // Append the horizontal axis.
+  svg.append("g")
+    .attr("transform", `translate(0,${marginTop})`)
+    .call(d3.axisTop(x).ticks(width / 100, "%"))
+    .call(g => g.selectAll(".domain").remove());
+
+  // Append the vertical axis.
+  svg.append("g")
+    .attr("transform", `translate(${marginLeft},0)`)
+    .call(d3.axisLeft(y).tickSizeOuter(0))
+    .call(g => g.selectAll(".domain").remove());
+
+  // Add legend to the right
+  const legend = svg.append("g")
+    .attr("transform", `translate(${width - marginRight + 10}, ${marginTop})`);
+
+  legend.selectAll("rect")
+    .data(series.map(d => d.key))
+    .enter().append("rect")
+    .attr("x", 0)
+    .attr("y", (d, i) => i * 20)
+    .attr("width", 18)
+    .attr("height", 18)
+    .attr("fill", d => color(d));
+
+  legend.selectAll("text")
+    .data(series.map(d => d.key))
+    .enter().append("text")
+    .attr("x", 24)
+    .attr("y", (d, i) => i * 20 + 9)
+    .attr("dy", "0.35em")
+    .text(d => d);
+}
+
+createStackedBarChart();
 // --- 6. Circle Packing ---
 // createPlaceholder("#circle-packing-container");
 
