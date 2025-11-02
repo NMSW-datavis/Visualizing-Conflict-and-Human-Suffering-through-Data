@@ -678,3 +678,292 @@ section:last-of-type {
 .waffle-legend-inner .legend-item { display:inline-flex; align-items:center; gap:8px; margin:6px 12px; }
 .waffle-legend-inner .legend-item span { vertical-align:middle; }
 .waffle-square { transition: opacity 0.12s ease, stroke 0.12s ease; cursor: default; }
+
+
+
+/* ======================================= */
+/* === STYLES ADDED FOR D3 CHARTS (2 & 6) === */
+/* ======================================= */
+
+
+:root {
+  --bg: #ffffff;
+  --txt: #222;
+  --muted: #666;
+  --panel: #fafafa;
+  --border: #e6e6e6;
+  --brand: #2a5599;
+  --accent: #0f6e6e;
+  --grid: #e8e8e8;
+  --font-title: 'Roboto Slab', serif;
+  --font-body: 'Fira Sans', sans-serif;
+}
+
+:root.dark {
+  --bg: #0f1115;
+  --txt: #d9e0ee;
+  --muted: #9aa4b2;
+  --panel: #171a21;
+  --border: #2a2f3a;
+  --grid: #2f3542;
+  --brand: #89a7ff;
+  --accent: #76d2d2;
+}
+
+/* Reset + base */
+* {
+  box-sizing: border-box
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0
+}
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none
+}
+
+a:hover {
+  text-decoration: underline
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  overflow-x: hidden
+}
+
+h1,
+h3 {
+  font-family: var(--font-title);
+  margin: .25rem 0
+}
+
+.muted {
+  color: var(--muted)
+}
+
+.small {
+  font-size: .85rem
+}
+
+/* Grid */
+.charts-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  padding-top: 20px;
+}
+
+.chart-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--bg);
+  overflow: hidden;
+  min-width: 0;
+  position: relative;
+  /* For tooltip positioning */
+}
+
+.chart-card.wide {
+  grid-column: 1/-1
+}
+
+.chart-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap
+}
+
+.chart {
+  position: relative;
+  margin: 10px 0 12px
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: .35rem .6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--txt);
+  text-decoration: none;
+  cursor: pointer
+}
+
+.btn:hover {
+  background: var(--panel)
+}
+
+.actions .btn {
+  margin-left: 6px
+}
+
+/* Tooltip */
+.viz-tooltip {
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  background: var(--bg);
+  color: var(--txt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  max-width: 260px;
+  z-index: 999;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+  font-size: 12px
+}
+
+/* SVG responsive */
+.chart-card svg {
+  display: block;
+  width: 100%;
+  height: auto
+}
+
+svg {
+  font-family: var(--font-body)
+}
+
+/* Axes & grid */
+.axis text {
+  fill: var(--txt);
+  font-size: 12px
+}
+
+.axis path,
+.axis line {
+  stroke: var(--muted);
+  shape-rendering: crispEdges;
+  opacity: .6
+}
+
+.y-grid line {
+  stroke: var(--grid)
+}
+
+/* Legends */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap
+}
+
+/* ======================================= */
+/* === STYLES ADDED FOR JAVASCRIPT CONTROL === */
+/* ======================================= */
+
+/* --- CHART 2: Grouped Bars --- */
+.grouped-bar-rect {
+  opacity: 0.9;
+  transition: opacity 120ms ease;
+}
+
+.grouped-bar-rect.fade {
+  opacity: 0.35;
+}
+
+.grouped-bar-rect.highlight {
+  opacity: 1.0;
+}
+
+/* --- CHART 6: Circles --- */
+.node circle {
+  opacity: 0.9;
+  stroke: #fff;
+  stroke-width: 1.5;
+  /* Transition for D3 opacity changes and CSS hover state */
+  transition: opacity 140ms ease, stroke-width 140ms ease, stroke 140ms ease;
+}
+
+/* CSS Hover state */
+.node circle:hover {
+  stroke: #333 !important;
+  /* Override default stroke on hover */
+  stroke-width: 3 !important;
+}
+
+/* Legend active fade out (controlled by D3 .style) */
+.legend-active .node circle {
+  pointer-events: none;
+}
+
+/* SVG background for reset clicks */
+.svg-background {
+  fill: none;
+  pointer-events: all;
+}
+
+/* Label on top of circles */
+.circle-pack-label {
+  text-anchor: middle;
+  pointer-events: none;
+  font-weight: 700;
+  /* font-size, fill, and text-shadow are set dynamically by JS */
+}
+
+/* "Death Toll Categories" title */
+.legend-title {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Each legend row (High, Medium, Low) */
+.legend-item-interactive {
+  cursor: pointer;
+}
+
+/* Text in the legend row */
+.legend-item-interactive text {
+  font-size: 11px;
+}
+
+/* =============== NEW CSS =============== */
+.chart-controls {
+  font-size: 12px;
+  margin: 0 0 10px;
+  display: flex !important;;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-controls label {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ====================================== */
+
+
+/* ======================================= */
+/* === STYLES ADDED FOR D3 CHARTS End(2 & 6) === */
+/* ======================================= */
