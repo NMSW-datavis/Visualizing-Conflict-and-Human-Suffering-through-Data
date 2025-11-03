@@ -47,18 +47,27 @@
   </section>
 
   <!-- 2. Grouped Bar Chart -->
- <section class="chart-section" id="grouped-bar">
-          <h2>The Anatomy Beneath “Extreme”</h2>
-          <p>
-              No two wars are alike. Some kill swiftly; others spread like slow poison.
-              This visualization breaks conflict down into its core dimensions — <em>Deadliness</em>,
-        <em>Diffusion</em>, <em>Danger</em>, and <em>Fragmentation</em> —
-              across nations like <strong>Syria</strong>, <strong>Myanmar</strong>, and <strong>Palestine</strong>.
-              In doing so, it reveals the anatomy of instability: which countries suffer from concentrated brutality,
-        and which from chaos that multiplies without end.
-            </p>
-          <div id="grouped-bar-chart-container" class="chart-container"></div>
-        </section>
+<section class="chart-section" id="grouped-bar">
+  <header class="chart-header">
+    <h2>The Anatomy Beneath “Extreme”</h2>
+    <div class="chart-intro-grid">
+      <p class="lede">
+        No two wars are alike. Some kill swiftly; others spread like slow poison.
+        This visualization breaks conflict into four core dimensions —
+        <em>Deadliness</em>, <em>Diffusion</em>, <em>Danger</em>, and <em>Fragmentation</em> —
+        across nations like <strong>Syria</strong>, <strong>Myanmar</strong>, and <strong>Palestine</strong>.
+        It reveals which countries suffer from concentrated brutality and which from multiplying chaos.
+      </p>
+      <p class="lede note">
+        Read the bars left-to-right within each country: higher bars indicate higher intensity
+        on that dimension (scaled 0–1). Hover a bar to see the exact score.
+      </p>
+    </div>
+  </header>
+
+  <div id="grouped-bar-chart-container" class="chart-container"></div>
+</section>
+
 
   <!-- 3. Heatmap -->
   <section class="chart-section" id="heatmap">
@@ -126,41 +135,34 @@
 
 
   <!-- 6. Circle Packing -->
-   <section class="chart-section" id="circle-packing">
-          <h2>The Weight of History</h2>
-          <p>
-              Some nations carry scars so deep they shape the world’s collective memory.
-              In this visualization, each circle is a country, its size representing the total number of deaths recorded
-        across decades of armed conflict.
-              The largest circles — <strong>Ethiopia</strong>, <strong>Syria</strong>, <strong>Rwanda</strong>,
-        <strong>Ukraine</strong> —
-              mark histories that have already defined generations.
-              Clustered together, they form constellations of suffering — a quiet geography of human loss that stretches
-        beyond borders.
-           
+ 
+  <section class="chart-section" id="circle-packing">
+  <header class="chart-header">
+    <h2>The Weight of History</h2>
+    <div class="chart-intro-grid">
+      <p class="lede">
+        Some nations carry scars so deep they shape collective memory. Each circle is a country;
+        size reflects total recorded deaths across decades of armed conflict. The largest circles —
+        <strong>Ethiopia</strong>, <strong>Syria</strong>, <strong>Rwanda</strong>, <strong>Ukraine</strong> —
+        mark histories that already define generations.
       </p>
+      <p class="lede note">
+        Use <span class="kbd">Size by</span> to switch the metric.
+        Hover a circle to see totals, rank, and category; click the legend to focus High/Medium/Low groups.
+      </p>
+    </div>
+  </header>
 
-          <div class="chart-controls" id="chart-6-controls">
-                <strong>Size by:</strong>
-                <label>
-                      <input type="radio" name="metric-toggle" value="value" checked>
-                      Total Deaths
-                  </label>
-                <label>
-                      <input type="radio" name="metric-toggle" value="deaths_intrastate">
-                      Intrastate
-                  </label>
-                <label>
-                      <input type="radio" name="metric-toggle" value="deaths_onesided">
-                      One-sided
-                  </label>
-                <label>
-                      <input type="radio" name="metric-toggle" value="deaths_nonstate">
-                      Non-state
-                  </label>
-            </div>
-          <div id="circle-packing-container" class="chart-container"></div>
-        </section>
+  <div class="chart-controls" id="chart-6-controls">
+    <strong>Size by:</strong>
+    <label><input type="radio" name="metric-toggle" value="value" checked> <span>Total deaths</span></label>
+    <label><input type="radio" name="metric-toggle" value="deaths_intrastate"> <span>Intrastate</span></label>
+    <label><input type="radio" name="metric-toggle" value="deaths_onesided"> <span>One-sided</span></label>
+    <label><input type="radio" name="metric-toggle" value="deaths_nonstate"> <span>Non-state</span></label>
+  </div>
+
+  <div id="circle-packing-container" class="chart-container"></div>
+</section>
 
   <!-- 7. Dumbbell Plot -->
   <section class="chart-section" id="dumbbell-plot">
