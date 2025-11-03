@@ -133,26 +133,33 @@
 
   <!-- 6. Circle Packing -->
  
-<section class="chart-section" id="circle-packing">
-  <header class="chart-header">
-    <h2>The Weight of History</h2>
-    <div class="chart-intro-grid">
-      <p class="lede">
-     Some nations carry scars so deep they shape collective memory. Each circle is a country; size reflects **total recorded deaths across decades of armed conflict (cumulative through 2024)**.The largest circles — <strong>Rwanda</strong>, <strong>Syria</strong>, <strong>Ethiopia</strong>, <strong>Ukraine</strong> mark histories that already define generations.
-      </p>
-    </div>
-  </header>
 
-  <div class="chart-controls" id="chart-6-controls">
-    
-    <label><input type="radio" name="metric-toggle" value="value" checked> <span>Total deaths</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_intrastate"> <span>Intrastate</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_onesided"> <span>One-sided</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_nonstate"> <span>Non-state</span></label>
-  </div>
+    <section class="chart-section" id="circle-packing">
+        <header class="chart-header">
+            <h2>The Weight of History</h2>
+            <div class="chart-intro-grid">
+                <p class="lede">
+              Some nations carry scars so deep they shape collective memory. Each circle is a country; size reflects
+            **total recorded deaths across decades of armed conflict (cumulative through 2024)**.The largest circles —
+            <strong>Rwanda</strong>, <strong>Syria</strong>, <strong>Ethiopia</strong>, <strong>Ukraine</strong> mark
+            histories that already define generations.
+                  </p>
+              </div>
+          </header>
 
-  <div id="circle-packing-container" class="chart-container"></div>
-</section>
+        <div class="chart-controls" id="chart-6-controls">
+            
+            <label><input type="radio" name="metric-toggle" value="value" checked> <span>Total deaths</span></label>
+            <label><input type="radio" name="metric-toggle" value="deaths_intrastate"> <span>Intrastate</span></label>
+           
+            <label><input type="radio" name="metric-toggle" value="deaths_interstate"> <span>Inter-state</span></label>
+
+            <label><input type="radio" name="metric-toggle" value="deaths_onesided"> <span>One-sided</span></label>
+            <label><input type="radio" name="metric-toggle" value="deaths_nonstate"> <span>Non-state</span></label>
+          </div>
+
+        <div id="circle-packing-container" class="chart-container"></div>
+    </section>
 
   <!-- 7. Dumbbell Plot -->
   <section class="chart-section" id="dumbbell-plot">
