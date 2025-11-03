@@ -836,6 +836,7 @@ createStackedBarChart();
 /* ===================Start CHART 2,6,7,8 – =================== */
 /* =================== CONFIG + HELPERS =================== */
 
+
 const DATA_FILE_1 = "./data/acled_conflict_index_fullyear2024_allcolumns-2.csv";
 const DATA_FILE_3 = "./data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv";
 
@@ -865,6 +866,35 @@ function makeTooltip(containerSel) {
   return tip;
 }
 
+function showTooltip(tip, event, html) {
+
+  tip.style("display", "block");
+
+  tip.html(html)
+    .style("opacity", 1)
+    .style("transform", "translate(0,0)");
+
+  const r = tip.node().getBoundingClientRect();
+  const offset = 14;
+
+  let x = event.clientX + offset;
+  let y = event.clientY - r.height - offset;
+
+  if (x + r.width > window.innerWidth - 8) x = event.clientX - r.width - offset;
+  if (x < 8) x = 8;
+  if (y < 8) y = event.clientY + offset;
+
+  tip.style("transform", `translate(${x}px, ${y}px)`)
+    .style("opacity", 1);
+}
+
+function hideTooltip(tip) {
+  tip.style("opacity", 0)
+    .style("transform", "translate(-9999px,-9999px)")
+    .style("display", "block");
+}
+
+
 // *** HELPER FUNCTION for font contrast ***
 function getContrastColor(hexColor) {
   if (!hexColor) return "#000000"; // Default to black
@@ -878,8 +908,7 @@ function getContrastColor(hexColor) {
   return luminance > 128 ? "#000000" : "#FFFFFF";
 }
 
-/* ---------- Legend helpers ---------- */
-// --- MODIFIED to support horizontal layout ---
+/* ---------- Legend helpers (Chart 2 only) ---------- */
 function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap = 20) {
   const g = svg.append("g").attr("transform", `translate(${x},${y})`).attr("class", "legend");
 
@@ -907,7 +936,7 @@ function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap 
 }
 
 // Global data variables
-let A1 = [], A3 = [];
+let ACLED_DATA = [], CUMULATIVE_DEATHS_DATA = [];
 
 /* =================== CHART 2 – Grouped Bar (Top3 Dimensions) =================== */
 function drawChart2() {
@@ -987,7 +1016,6 @@ function drawChart2() {
     });
 }
 
-/* =================== CHART 6 – Circle Packing (Fully Dynamic) =================== */
 
 function drawCirclePacking() {
   const el = d3.select("#circle-packing-container"); 
