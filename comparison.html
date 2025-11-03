@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Anatomy of Conflict: A Comparative Story</title>
+  <title>The Anatomy of Conflict: A Data Story</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,193 +14,123 @@
   <header class="site-header comparison-header">
     <div class="container">
       <h1>The Anatomy of Conflict</h1>
-      <p class="intro-subtitle">A data story about patterns of violence, suffering, and humanity’s shifting crises</p>
+      <p class="intro-subtitle">A story told through data  tracing how violence reshapes lives, nations, and time itself.</p>
       <a href="index.html" class="return-home">← Back to Home</a>
     </div>
   </header>
 
   <main class="container">
 
-
-  <!-- Intro -->
   <section id="comparison-intro">
     <blockquote class="about-quote">
-      “When we compare, patterns of human suffering begin to emerge — the scales, the shapes, and the shifting centers of pain.”
+      “When we compare, patterns of human suffering begin to emerge  the scales, the shapes, and the shifting centers of pain.”
     </blockquote>
     <p>
-      This story traces the anatomy of global conflict — from the countries most engulfed in violence, to the forms that violence takes,
-      and finally to the collective toll on humanity. Through data, we can see not only where people are suffering,
-      but also how the structure of conflict itself changes across time and place.
+      Every war begins as a local tragedy. But taken together, these individual crises form a vast and interconnected anatomy of conflict  a living, shifting organism made of pain, politics, and persistence.
     </p>
-  </section>
-
-  <!-- 1. Bar Chart -->
-  <section class="chart-section" id="bar-chart">
-    <h2>Where the Fires Burn Brightest</h2>
     <p>
-      The story begins with the places where violence burns brightest. These bars represent the world’s ten “Extreme” conflict zones in 2024 —
-      nations like <strong>Sudan</strong>, <strong>Palestine</strong>, and <strong>Myanmar</strong>, where violence has become daily life.
-      Each bar is a measure of intensity — the sum of fear, displacement, and loss condensed into a single score.
-      Together, they mark the epicenters of today’s global suffering, where conflict is not a moment but a condition.
+      Over the last five years, the geography of civilian suffering has moved like a tide. In Ukraine, the shock was sudden  in 2022 with the russian invasionan eruption of destruction that redrew the world’s attention the same for the most recent war im palestine. While in Mexico, the Democratic Republic of Congo and Nigeria, the violence never truly paused; it simply endured, slow and unrelenting.
     </p>
-    <div id="bar-chart-container" class="chart-container"></div>
+    <p>
+      When we visualize this data  each point representing lives lost, each region a pulse in the global body of war  patterns emerge that words alone can’t convey. then when we compare it to the countries with the least amount of death it draws a stark contrast of human experience.
+    </p>
+    
   </section>
 
-  <!-- 2. Grouped Bar Chart -->
-<section class="chart-section" id="grouped-bar">
-  <header class="chart-header">
-    <h2>The Anatomy Beneath “Extreme”</h2>
-    <div class="chart-intro-grid">
-      <p class="lede">
-        No two wars are alike. Some kill swiftly; others spread like slow poison.
-        This visualization breaks conflict into four core dimensions —
-        <em>Deadliness</em>, <em>Diffusion</em>, <em>Danger</em>, and <em>Fragmentation</em> —
-        across nations like <strong>Syria</strong>, <strong>Myanmar</strong>, and <strong>Palestine</strong>.
-        It reveals which countries suffer from concentrated brutality and which from multiplying chaos.
-      </p>
-      <p class="lede note">
-        Read the bars left-to-right within each country: higher bars indicate higher intensity
-        on that dimension (scaled 0–1). Hover a bar to see the exact score.
-      </p>
-    </div>
-  </header>
-
-  <div id="grouped-bar-chart-container" class="chart-container"></div>
-</section>
-
-
-  <!-- 3. Heatmap -->
   <section class="chart-section" id="heatmap">
-  <h2>The Shifting Focus of Civilian Suffering</h2>
-<p>
-  Behind every cell lies a story of violence and endurance. Some conflicts  like <strong>Ukraine</strong>  erupted suddenly in 2022,
-  drawing sharp spikes of global attention. Others: like <strong>Nigeria</strong>, <strong>Sudan</strong>, or the <strong>Democratic Republic of Congo</strong> — have persisted for years,
-  their toll steady and relentless, often unnoticed by the wider world. 
-  The map below follows the geography of civilian death, showing how the focus of suffering has shifted over time.
-  Through its patterns, we can trace both the sudden crises that shocked the world and the long-running wars that endured in silence.
-</p>
-
-
     <div class="heatmap-mode-controls">
-      <button class="mode-btn active" data-mode="highestOverall">Highest Overall</button>
-      <button class="mode-btn" data-mode="highest5">Highest (Past 5 Years)</button>
-      <button class="mode-btn" data-mode="lowestOverall">Lowest Overall</button>
+      <button class="mode-btn active" data-mode="highest5">Highest (Past 5 Years)</button>
       <button class="mode-btn" data-mode="lowest5">Lowest (Past 5 Years)</button>
     </div>
-
     <div id="heatmap-summary" class="heatmap-summary"></div>
     <div id="heatmap-container" class="chart-container"></div>
     <div id="heatmap-legend" class="heatmap-legend"></div>
   </section>
 
-  <!-- 4. 100% Stacked Bar Chart -->
-  <section class="chart-section" id="stacked-bar">
-    <h2>When Regions Tell Different Stories</h2>
+  <section class="chart-section" id="bar-chart">
     <p>
-      When viewed through regions rather than nations, the world’s pain divides differently.
-      Africa bears the largest share of intrastate wars — conflicts that turn inward, consuming nations from within.
-      In the Middle East, one-sided violence and cross-border hostilities shape the pattern.
-      Asia’s wars, meanwhile, are as varied as its terrain.
-      Each bar represents not only lives lost, but the character of conflict — showing how culture, geography, and power define the ways people suffer.
+      To measure the gravity of these conflicts, we use the ACLED Conflict Index  a composite measure of <strong>deadliness</strong>, <strong>danger</strong>, and <strong>fragmentation</strong>. 
     </p>
-    <div id="stacked-bar-chart-container" class="chart-container"></div>
+    <p>
+      we selected the top Ten nations that currently fall into the category of “Extreme.” These are the frontlines of the modern world’s suffering: Palestine, Myanmar, Syria, Mexico, and others whose names have become synonymous with endurance and loss.
+    </p>
+    <div id="bar-chart-container" class="chart-container"></div>
   </section>
 
- <section class="chart-section" id="waffle-chart">
-  <h2>The World as a Mosaic of Loss</h2>
- <p>
-  When we look closely, the data turns back into people. Each square below represents 
-  <strong>one percent</strong> of all lives lost to conflict small, silent pieces of a much larger grief.
-</p>
-
-<p>
-  The colors tell different kinds of stories: <em>intrastate wars</em>, where nations fracture from within; 
-  <em>one-sided violence</em>, where civilians become the targets; <em>non-state conflicts</em>, where 
-  armed groups fight outside government control; and <em>interstate wars</em>, when countries face each other across borders.
-</p>
-
-<p>
-  In <strong>The Middle East</strong>, most fatalities come from intrastate wars — conflicts between governments and armed groups within the same country. 
-  In <strong>Africa</strong>, a large portion of deaths are due to one-sided violence, where civilians are targeted by state or non-state actors. 
-  Elsewhere, the colors shift, but the meaning doesn’t change: each shade, each square, carries the weight of lives interrupted.
-</p>
-
-  <!-- New explicit container for controls -->
-  <div id="waffle-controls" class="waffle-controls"></div>
-
-  <div id="waffle-summary" class="heatmap-summary"></div>
-  <div id="waffle-chart-container" class="chart-container"></div>
-  <div id="waffle-legend" class="waffle-legend"></div>
-</section>
-
-
-  <!-- 6. Circle Packing -->
- 
-  <section class="chart-section" id="circle-packing">
-  <header class="chart-header">
-    <h2>The Weight of History</h2>
-    <div class="chart-intro-grid">
-      <p class="lede">
-        Some nations carry scars so deep they shape collective memory. Each circle is a country;
-        size reflects total recorded deaths across decades of armed conflict. The largest circles —
-        <strong>Ethiopia</strong>, <strong>Syria</strong>, <strong>Rwanda</strong>, <strong>Ukraine</strong> —
-        mark histories that already define generations.
-      </p>
-      <p class="lede note">
-        Use <span class="kbd">Size by</span> to switch the metric.
-        Hover a circle to see totals, rank, and category; click the legend to focus High/Medium/Low groups.
-      </p>
-    </div>
-  </header>
-
-  <div class="chart-controls" id="chart-6-controls">
-    
-    <label><input type="radio" name="metric-toggle" value="value" checked> <span>Total deaths</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_intrastate"> <span>Intrastate</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_onesided"> <span>One-sided</span></label>
-    <label><input type="radio" name="metric-toggle" value="deaths_nonstate"> <span>Non-state</span></label>
-  </div>
-
-  <div id="circle-packing-container" class="chart-container"></div>
-</section>
-
-  <!-- 7. Dumbbell Plot -->
-  <section class="chart-section" id="dumbbell-plot">
-    <h2>Between Fear and Fatality</h2>
+  <section class="chart-section" id="grouped-bar">
     <p>
-      In the most violent corners of the world, danger and deadliness do not always move together.
-      This plot compares them directly: one dot for <em>how fatal</em> a conflict is, the other for <em>how unstable</em>.
-      In some nations, like <strong>Sudan</strong>, death itself defines the danger; in others, like <strong>Myanmar</strong>,
-      chaos, not lethality, makes survival uncertain.
-      Between the two dots, the line — the “dumbbell” — captures that fragile space where people live between fear and fatality.
+      Yet, no two wars share the same DNA. The anatomy of conflict differs from place to place. 
+      Palestine’s score is driven by high <strong>Danger</strong> and <strong>Deadliness</strong>, where civilians are trapped in an unending cycle of attack and retaliation. 
+      In Myanmar, the chaos comes from within  a fractured war defined by <strong>Fragmentation</strong>, where countless factions divide both land and lives. 
+     In Mexico, the violence is fueled by powerful cartels and a government struggle for control. We can look at the leading top 3 countries in each category to see how their scores differ.
+    </p>
+    <div id="grouped-bar-chart-container" class="chart-container"></div>
+  </section>
+
+  <section class="chart-section" id="dumbbell-plot">
+    <p>
+      The space between <em>danger</em> and <em>deadliness</em> tells another story  one about how fear itself becomes a weapon. 
+      In some countries, the line between the two is narrow: death and danger arrive together. 
+      In others, the gap widens, suggesting a war fought not only on battlefields, but in the minds of civilians  where uncertainty, displacement, and instability erode safety long before a bullet is fired.
     </p>
     <div id="dumbbell-plot-container" class="chart-container"></div>
   </section>
 
-  <!-- 8. Stacked Bar (Small Multiples) -->
-  <section class="chart-section" id="small-multiples">
-    <h2>The Structure Within Regions</h2>
+  <section class="chart-section" id="stacked-bar">
     <p>
-      The story ends where it began — in regions, not numbers.
-      Each small multiple below zooms into a region’s internal structure:
-      Africa, Asia, the Middle East.
-      Inside each, countries stack their bars by <em>types of violence</em>, revealing the internal architecture of suffering.
-      It’s the same global story, seen through local eyes — the same wounds, reshaped by geography and history.
+      When the world’s violence is grouped by region, the imbalance becomes stark. 
+      Africa and the Middle East carry the heaviest share of human loss  a weight that shapes entire generations.
+      Each bar here represents not just numbers, but neighborhoods, families, and futures torn apart.
+    </p>
+    <div id="stacked-bar-chart-container" class="chart-container"></div>
+  </section>
+
+  <section class="chart-section" id="waffle-chart">
+    <p>
+      But the <em>composition</em> of conflict  who fights, and who suffers  also changes from place to place.
+      If every square on this chart stood for 1% human life lost, most would fall under <strong>Intrastate conflicts</strong>  wars fought <em>within</em> nations, often between governments and insurgent groups.
+      In Africa, <strong>One-sided violence</strong>  deliberate attacks on civilians  takes a grimly dominant role. 
+      In the Middle East, <strong>Intrastate</strong> conflict still defines the region’s pain.
+    </p>
+    <div id="waffle-controls" class="waffle-controls"></div>
+    <div id="waffle-summary" class="heatmap-summary"></div>
+    <div id="waffle-chart-container" class="chart-container"></div>
+    <div id="waffle-legend" class="waffle-legend"></div>
+  </section>
+
+  <section class="chart-section" id="circle-packing">
+    <p>
+      The ACLED Conflict Index allows another view: a constellation of circles, each one a country, each color a level of crisis  <em>Extreme</em>, <em>High</em>, or <em>Medium</em>.
+      The size of a circle mirrors the scale of the suffering inside its borders.
+      When viewed together, they resemble a planetary map of human conflict  clusters of pain orbiting a shared world.
+    </p>
+    <div class="chart-controls" id="chart-6-controls"></div>
+    <div id="circle-packing-container" class="chart-container"></div>
+  </section>
+
+  <section class="chart-section" id="small-multiples">
+    <p>
+      Each war, when reduced to its data, still carries a unique fingerprint.
+      In Afghanistan, violence is overwhelmingly <strong>Intrastate</strong>.
+      In Somalia, the lines blur between <strong>Intrastate</strong> and <strong>One-sided</strong> aggression. 
+      In Mexico, nearly all the bloodshed is <strong>Non-state</strong>  a conflict without battlefields, but with no shortage of loss.
+      Each chart represents not just statistics, but the local geometry of human suffering.
     </p>
     <div id="small-multiples-container" class="chart-container"></div>
   </section>
 
-  <!-- Closing -->
   <section id="story-end">
     <blockquote class="about-quote">
-      “Data does not end suffering, but it can illuminate its structure —
-      allowing us to see not just where conflict burns, but how it spreads and evolves.”
+      “Data does not end suffering, but it can illuminate its structure  allowing us to see not just where conflict burns, but how it spreads and evolves.”
     </blockquote>
-    <a href="index.html" class="return-home large">← Return to Main Page</a>
+    <p>
+      Behind every bar and circle are people  those who flee, those who resist, and those who simply endure. 
+      The anatomy of conflict is not just about power or politics; it is about humanity’s ongoing struggle to survive itself.
+    </p>
+    <a href="index.html" class="return-home large">← Return to Home</a>
   </section>
 
 </main>
-
 
   <footer class="site-footer">
     <div class="container footer-content">
@@ -209,7 +139,6 @@
     </div>
   </footer>
 
-  <!-- D3 and JS -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="comparison.js"></script>
 </body>
