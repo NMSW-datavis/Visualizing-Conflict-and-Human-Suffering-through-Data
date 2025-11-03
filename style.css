@@ -1112,6 +1112,10 @@ svg {
 .circle-pack-label {
   pointer-events: none;
 }
+#grouped-bar .chart-intro-grid p {
+    margin-bottom: 0.8rem; 
+    line-height: 1.5;     
+}
 
 /* ======================================= */
 /* === STYLES FOR CHARTS 2 & 6 - End COMPLETE === */
