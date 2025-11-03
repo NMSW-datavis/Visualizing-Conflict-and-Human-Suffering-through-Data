@@ -835,7 +835,6 @@ createPlaceholder("#small-multiples-container");
 /* ===================Start CHART 2,6 –  =================== */
 /* =================== CONFIG + HELPERS =================== */
 
-
 const DATA_FILE_1 = "./data/acled_conflict_index_fullyear2024_allcolumns-2.csv";
 const DATA_FILE_3 = "./data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv";
 
@@ -934,70 +933,116 @@ function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap 
 let ACLED_DATA = [], CUMULATIVE_DEATHS_DATA = [];
 
 /* =================== CHART 2 – Grouped Bar (Top3 Dimensions) =================== */
+/* =================== CHART 2 – Grouped Bar (Top 5 Dimensions) =================== */
+
+/* =================== CHART 2 – Grouped Bar (Top 5 Dimensions) - UPGRADED =================== */
+/* =================== CHART 2 – Grouped Bar (Top 5 Dimensions) - UPGRADED B & C =================== */
 function drawChart2(acledData) {
-  const top3 = acledData.filter(d => d.IndexLevel.toLowerCase() === "extreme")
-    .sort((a, b) => b.TotalScore - a.TotalScore).slice(0, 3).map(d => d.Country);
+    // Define chart dimensions (W, H, m, w, h are assumed to be available from the surrounding scope or defined internally)
+    const W = 720, H = 420;
+    const m = { t: 46, r: 20, b: 60, l: 60 }, w = W - m.l - m.r, h = H - m.t - m.b;
 
-  const melted = [];
-  acledData.filter(d => top3.includes(d.Country)).forEach(row => {
-    ["Deadliness", "Diffusion", "Danger", "Fragmentation"].forEach(m => {
-      melted.push({ Country: row.Country, Metric: m, Value: row[m] });
-    });
-  });
+    // Select the top 5 countries in the "Extreme" category by TotalScore
+    // (This correctly yields Palestine, Myanmar, Mexico, Brazil, Lebanon based on your data)
+    const topCountries = acledData.filter(d => d.IndexLevel.toLowerCase() === "extreme")
+        .sort((a, b) => b.TotalScore - a.TotalScore).slice(0, 5).map(d => d.Country);
 
-  const el = d3.select("#grouped-bar-chart-container");
-  el.selectAll("*").remove(); // Clear placeholder
-  const tip = makeTooltip(el);
+    // Prepare the data for grouped bar chart (melted format)
+    const melted = [];
+    acledData.filter(d => topCountries.includes(d.Country)).forEach(row => {
+        ["Deadliness", "Diffusion", "Danger", "Fragmentation"].forEach(m => {
+            // Attach TotalScore to the melted data for easy access in the tooltip
+            melted.push({ Country: row.Country, Metric: m, Value: row[m], TotalScore: row.TotalScore });
+        });
+    });
 
-  const W = 720, H = 420;
-  const m = { t: 46, r: 20, b: 60, l: 60 }, w = W - m.l - m.r, h = H - m.t - m.b;
+    const el = d3.select("#grouped-bar-chart-container");
+    el.selectAll("*").remove(); 
+    const tip = makeTooltip(el); // Assuming makeTooltip is a globally defined helper
 
-  const svg = el.append("svg")
-    .attr("viewBox", `0 0 ${W} ${H}`)
-    .attr("preserveAspectRatio", "xMidYMid meet");
+    const svg = el.append("svg")
+        .attr("viewBox", `0 0 ${W} ${H}`)
+        .attr("preserveAspectRatio", "xMidYMid meet");
 
-  const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
+    const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
 
-  const x0 = d3.scaleBand().domain(top3).range([0, w]).padding(0.2);
-  const x1 = d3.scaleBand().domain(metricColors.domain()).range([0, x0.bandwidth()]).padding(0.05);
-  const y = d3.scaleLinear().domain([0, 1]).range([h, 0]);
+    // Define scales
+    const x0 = d3.scaleBand().domain(topCountries).range([0, w]).padding(0.2);
+    const x1 = d3.scaleBand().domain(metricColors.domain()).range([0, x0.bandwidth()]).padding(0.05);
+    const y = d3.scaleLinear().domain([0, 1]).range([h, 0]);
 
-  g.append("g").attr("transform", `translate(0,${h})`).attr("class", "axis").call(d3.axisBottom(x0));
-  g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+    // Draw Axes
+    g.append("g").attr("transform", `translate(0,${h})`).attr("class", "axis").call(d3.axisBottom(x0));
+    g.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5));
 
-  const rects = g.selectAll("rect").data(melted).join("rect")
-    .attr("class", "grouped-bar-rect")
-    .attr("x", d => x0(d.Country) + x1(d.Metric))
-    .attr("y", d => y(d.Value))
-    .attr("width", x1.bandwidth())
-    .attr("height", d => h - y(d.Value))
-    .attr("fill", d => metricColors(d.Metric));
+    // ----------------------------------------------------
+    // UPGRADE B: Add Reference Line (y = 0.5)
+    // ----------------------------------------------------
+    const refLineY = y(0.5);
 
-  addDiscreteLegend(svg, metricColors.domain(), metricColors, m.l, 18, true, 24);
+    g.append("line")
+        .attr("x1", 0)
+        .attr("x2", w)
+        .attr("y1", refLineY)
+        .attr("y2", refLineY)
+        .attr("stroke", "#cc3300")
+        .attr("stroke-dasharray", "4 4")
+        .attr("opacity", 0.7);
+    
+    // Add Label for Reference Line
+    g.append("text")
+        .attr("x", w)
+        .attr("y", refLineY - 5)
+        .attr("text-anchor", "end")
+        .style("font-size", "10px")
+        .style("fill", "#cc3300")
+        .text("Mid-Intensity Threshold (0.5)");
 
-  // TOOLTIP HANDLERS
-  rects.on("mouseenter", (event, d) => {
-    rects.interrupt()
-      .classed("fade", true)
-      .classed("highlight", false);
+    // ----------------------------------------------------
 
-    rects.filter(r => r.Country === d.Country)
-      .interrupt()
-      .classed("fade", false)
-      .classed("highlight", true);
+    // Draw Rectangles (Bars)
+    const rects = g.selectAll("rect").data(melted).join("rect")
+        .attr("class", "grouped-bar-rect")
+        .attr("x", d => x0(d.Country) + x1(d.Metric))
+        .attr("y", d => y(d.Value))
+        .attr("width", x1.bandwidth())
+        .attr("height", d => h - y(d.Value))
+        .attr("fill", d => metricColors(d.Metric));
 
-    const content = `<b>${d.Country}</b><br>${d.Metric} Score: ${fmt12(d.Value)}`;
-    showTooltip(tip, event, content);
-  })
-    .on("mousemove", event => {
-      showTooltip(tip, event, tip.html()); // Reuse content, update position
-    })
-    .on("mouseleave", () => {
-      rects.interrupt()
-        .classed("fade", false)
-        .classed("highlight", false);
-      hideTooltip(tip);
-    });
+    // Add Legend
+    addDiscreteLegend(svg, metricColors.domain(), metricColors, m.l, 18, true, 24);
+
+    // ----------------------------------------------------
+    // UPGRADE C: Display Total Score in Tooltip
+    // ----------------------------------------------------
+    rects.on("mouseenter", (event, d) => {
+        rects.interrupt()
+            .classed("fade", true)
+            .classed("highlight", false);
+
+        rects.filter(r => r.Country === d.Country)
+            .interrupt()
+            .classed("fade", false)
+            .classed("highlight", true);
+
+        // Construct the content with the main metric and the Total Score (highlighted)
+        const content = `
+            <b>${d.Country}</b>
+            <hr style="margin:4px 0; border:none; border-top:1px solid rgba(255,255,255,0.2)">
+            <div>${d.Metric}: ${fmt12(d.Value)}</div>
+            <div style="margin-top:4px; font-weight:600; color:#ffd700;">Total Score: ${fmt12(d.TotalScore)}</div>
+        `;
+        showTooltip(tip, event, content);
+    })
+        .on("mousemove", event => {
+            showTooltip(tip, event, tip.html());
+        })
+        .on("mouseleave", () => {
+            rects.interrupt()
+                .classed("fade", false)
+                .classed("highlight", false);
+            hideTooltip(tip);
+        });
 }
 
 
@@ -1250,7 +1295,6 @@ Promise.all([
   drawCirclePacking();
 
 }).catch(e => console.error("Data load error:", e));
-
 
 /* =================== EndCHART 2,6 –  =================== */
 
