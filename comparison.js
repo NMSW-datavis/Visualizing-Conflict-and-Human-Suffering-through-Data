@@ -199,9 +199,9 @@
     if (!A1.length) { createPlaceholder(target, "Grouped bar — data not ready"); return; }
 
     const top3 = A1.filter(d => (d.IndexLevel || "").toLowerCase() === "extreme")
-      .sort((a, b) => d3.descending(a.TotalScore, b.TotalScore)).slice(0, 3).map(d => d.Country);
+      .sort((a, b) => d3.descending(a.TotalScore, b.TotalScore)).slice(0, 5).map(d => d.Country);
 
-    if (!top3.length) { createPlaceholder(target, "Grouped bar — no top 3"); return; }
+    if (!top3.length) { createPlaceholder(target, "Grouped bar — no top 5"); return; }
 
     const metrics = ["Deadliness", "Diffusion", "Danger", "Fragmentation"];
     const melted = [];
