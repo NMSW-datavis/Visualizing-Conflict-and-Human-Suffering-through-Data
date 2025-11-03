@@ -835,6 +835,7 @@ createPlaceholder("#small-multiples-container");
 /* ===================Start CHART 2,6 –  =================== */
 /* =================== CONFIG + HELPERS =================== */
 
+
 const DATA_FILE_1 = "./data/acled_conflict_index_fullyear2024_allcolumns-2.csv";
 const DATA_FILE_3 = "./data/cumulative-deaths-in-armed-conflicts-by-country-region-and-type.csv";
 
@@ -853,32 +854,58 @@ const metricColors = d3.scaleOrdinal()
 
 const fmtInt = d3.format(","), fmtPct = d3.format(".0%"), fmt12 = d3.format(".2f");
 
-/* ---------- Tooltip factory (scoped to nearest card) ---------- */
-function makeTooltip(containerSel) {
-  const card = containerSel.node().closest(".chart-section") || containerSel.node();
-  // position: relative is set on .chart-card in the CSS
-  const root = d3.select(card);
-  root.style("position", "relative");
-  let tip = root.select(".viz-tooltip");
-  if (tip.empty()) tip = root.append("div").attr("class", "viz-tooltip");
+// ===== Robust tooltip helpers (final) =====
+function makeTooltip() {
+  let tip = d3.select("body").select("#cp-tooltip");
+  if (tip.empty()) {
+    tip = d3.select("body")
+      .append("div")
+      .attr("id", "cp-tooltip")
+      .attr("class", "viz-tooltip");
+  }
   return tip;
 }
 
+function showTooltip(tip, event, html) {
+
+  tip.style("display", "block");
+
+  tip.html(html)
+    .style("opacity", 1)
+    .style("transform", "translate(0,0)");
+
+  const r = tip.node().getBoundingClientRect();
+  const offset = 14;
+
+  let x = event.clientX + offset;
+  let y = event.clientY - r.height - offset;
+
+  if (x + r.width > window.innerWidth - 8) x = event.clientX - r.width - offset;
+  if (x < 8) x = 8;
+  if (y < 8) y = event.clientY + offset;
+
+  tip.style("transform", `translate(${x}px, ${y}px)`)
+    .style("opacity", 1);
+}
+
+function hideTooltip(tip) {
+  tip.style("opacity", 0)
+    .style("transform", "translate(-9999px,-9999px)")
+    .style("display", "block");
+}
+
+
 // *** HELPER FUNCTION for font contrast ***
 function getContrastColor(hexColor) {
-  if (!hexColor) return "#000000"; // Default to black
+  if (!hexColor) return "#000000";
   const color = d3.color(hexColor);
   if (!color) return "#000000";
 
-  // Calculate luminance (simple formula)
   const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
-
-  // 128 is the midpoint (0-255). If luminance is high, use black text.
   return luminance > 128 ? "#000000" : "#FFFFFF";
 }
 
-/* ---------- Legend helpers ---------- */
-// --- MODIFIED to support horizontal layout ---
+/* ---------- Legend helpers (Chart 2 only) ---------- */
 function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap = 20) {
   const g = svg.append("g").attr("transform", `translate(${x},${y})`).attr("class", "legend");
 
@@ -889,16 +916,14 @@ function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap 
   row.append("text").attr("x", 16).attr("y", 10).text(d => d);
 
   if (horizontal) {
-    // New horizontal logic: position items side-by-side
     let cumulativeWidth = 0;
     row.attr("transform", function (d, i) {
       const currentWidth = this.getBBox().width;
       const xPos = cumulativeWidth;
-      cumulativeWidth += currentWidth + itemGap; // 'itemGap' is space *between* items
+      cumulativeWidth += currentWidth + itemGap;
       return `translate(${xPos}, 0)`;
     });
   } else {
-    // Original vertical logic
     row.attr("transform", (d, i) => `translate(0,${i * itemGap})`);
   }
 
@@ -906,30 +931,30 @@ function addDiscreteLegend(svg, items, color, x, y, horizontal = false, itemGap 
 }
 
 // Global data variables
-let A1 = [], A3 = [];
+let ACLED_DATA = [], CUMULATIVE_DEATHS_DATA = [];
 
 /* =================== CHART 2 – Grouped Bar (Top3 Dimensions) =================== */
-function drawChart2() {
-  const top3 = A1.filter(d => d.IndexLevel.toLowerCase() === "extreme")
+function drawChart2(acledData) {
+  const top3 = acledData.filter(d => d.IndexLevel.toLowerCase() === "extreme")
     .sort((a, b) => b.TotalScore - a.TotalScore).slice(0, 3).map(d => d.Country);
 
   const melted = [];
-  A1.filter(d => top3.includes(d.Country)).forEach(row => {
+  acledData.filter(d => top3.includes(d.Country)).forEach(row => {
     ["Deadliness", "Diffusion", "Danger", "Fragmentation"].forEach(m => {
       melted.push({ Country: row.Country, Metric: m, Value: row[m] });
     });
   });
 
-  const el = d3.select("#grouped-bar-chart-container"); const tip = makeTooltip(el);
+  const el = d3.select("#grouped-bar-chart-container");
+  el.selectAll("*").remove(); // Clear placeholder
+  const tip = makeTooltip(el);
 
-  // Use fixed dimensions for viewBox for responsive sizing
   const W = 720, H = 420;
   const m = { t: 46, r: 20, b: 60, l: 60 }, w = W - m.l - m.r, h = H - m.t - m.b;
 
   const svg = el.append("svg")
     .attr("viewBox", `0 0 ${W} ${H}`)
     .attr("preserveAspectRatio", "xMidYMid meet");
-
 
   const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
 
@@ -940,21 +965,18 @@ function drawChart2() {
   g.append("g").attr("transform", `translate(0,${h})`).attr("class", "axis").call(d3.axisBottom(x0));
   g.append("g").attr("class", "axis").call(d3.axisLeft(y));
 
-  // Refactored to use CSS class for default opacity and transition
   const rects = g.selectAll("rect").data(melted).join("rect")
-    .attr("class", "grouped-bar-rect") // Apply default opacity/transition from CSS
+    .attr("class", "grouped-bar-rect")
     .attr("x", d => x0(d.Country) + x1(d.Metric))
     .attr("y", d => y(d.Value))
     .attr("width", x1.bandwidth())
     .attr("height", d => h - y(d.Value))
-    .attr("fill", d => metricColors(d.Metric)); // fill must be inline/D3
+    .attr("fill", d => metricColors(d.Metric));
 
-  // --- Legend call: Positioned at x=m.l (60), y=18 (top of SVG area) ---
   addDiscreteLegend(svg, metricColors.domain(), metricColors, m.l, 18, true, 24);
 
-  // Use .classed() for hover interaction
-  rects.on("mouseenter", (ev, d) => {
-    // Highlight all bars for this country
+  // TOOLTIP HANDLERS
+  rects.on("mouseenter", (event, d) => {
     rects.interrupt()
       .classed("fade", true)
       .classed("highlight", false);
@@ -964,325 +986,224 @@ function drawChart2() {
       .classed("fade", false)
       .classed("highlight", true);
 
-    tip.style("display", "block").style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px")
-      .html(`<b>${d.Country}</b><br>${d.Metric}: ${fmt12(d.Value)}`);
+    const content = `<b>${d.Country}</b><br>${d.Metric} Score: ${fmt12(d.Value)}`;
+    showTooltip(tip, event, content);
   })
-    .on("mousemove", ev => tip.style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px"))
+    .on("mousemove", event => {
+      showTooltip(tip, event, tip.html()); // Reuse content, update position
+    })
     .on("mouseleave", () => {
       rects.interrupt()
         .classed("fade", false)
-        .classed("highlight", false); // Reset all to default opacity
-      tip.style("display", "none");
+        .classed("highlight", false);
+      hideTooltip(tip);
     });
 }
 
-/* =================== CHART 6 – Circle Packing (Fully Dynamic) =================== */
 
 function drawCirclePacking() {
-
-  // *** Process data, keeping all metrics ***
-  const allItems = A3.filter(d => d.Code !== "" && d.Entity !== "World")
+  const allItems = CUMULATIVE_DEATHS_DATA
+    .filter(d => d.Code !== "" && d.Entity !== "World")
     .map(d => ({
       name: d.Entity,
-      value: d.deaths_intrastate + d.deaths_onesided + d.deaths_nonstate + d.deaths_interstate,
-      deaths_intrastate: d.deaths_intrastate,
-      deaths_onesided: d.deaths_onesided,
-      deaths_nonstate: d.deaths_nonstate,
-      // Store the "total" value separately for tooltips
-      total_deaths: d.deaths_intrastate + d.deaths_onesided + d.deaths_nonstate + d.deaths_interstate
+      value: num(d.deaths_intrastate) + num(d.deaths_onesided) + num(d.deaths_nonstate) + num(d.deaths_interstate),
+      deaths_intrastate: num(d.deaths_intrastate),
+      deaths_onesided: num(d.deaths_onesided),
+      deaths_nonstate: num(d.deaths_nonstate),
+      deaths_interstate: num(d.deaths_interstate),
+      total_deaths: num(d.deaths_intrastate) + num(d.deaths_onesided) + num(d.deaths_nonstate) + num(d.deaths_interstate)
     }));
 
-  const el = d3.select("#circle-packing-container"); const tip = makeTooltip(el);
-  const W = 980, H = 560, legendW = 280;
-  const svg = el.append("svg").attr("viewBox", `0 0 ${W} ${H}`);
+  const el = d3.select("#circle-packing-container");
+  el.selectAll("*").remove();
+  const tip = makeTooltip(el);
 
-  // === 1. SETUP STATIC ELEMENTS (Background, Main 'g') ===
+  const W = 980, H = 560, chartW = 700;
+  const svg = el.append("svg").attr("viewBox", `0 0 ${W} ${H}`);
+  const g = svg.append("g");
+  const legG = svg.append("g").attr("transform", `translate(${chartW + 10}, 30)`);
+
   svg.append("rect")
     .attr("class", "svg-background")
-    .attr("width", W - legendW)
-    .attr("height", H);
+    .attr("width", chartW).attr("height", H)
+    .attr("fill", "none").style("pointer-events", "all")
+    .on("click", () => { activeCategory = null; render(); });
 
-  const g = svg.append("g");
-
-  const legG = svg.append("g")
-    .attr("transform", `translate(${W - legendW + 10}, 30)`);
-
+  let currentMetricKey = "value";
   let activeCategory = null;
-  let circles;
-  let labels;
-  let legendItems;
-  let getCategory;
-  let importantNames = new Set();
+  let thresholds = { med: 0, high: 0 };
+  const importantNames = new Set();
 
-  // === 2. DEFINE UPDATE FUNCTIONS (updatePack, updateFilter) ===
+  const interpHigh = d3.interpolateRgb("#9B4E38", "#592E1E");
+  const interpMedium = d3.interpolateRgb("#F0B873", "#D98E3A");
+  const interpLow = d3.interpolateRgb("#ADD8E6", "#6495ED");
 
-  /**
-   * Main function to re-calculate and re-draw everything
-   */
-  function updatePack(metricKey) {
+  function getCategory(val) {
+    if (val >= thresholds.high) return "high";
+    if (val >= thresholds.med) return "medium";
+    return "low";
+  }
 
-    // 1. Filter items: Only include items where the *current metric* is > 0
-    const items = allItems.filter(d => d[metricKey] > 0);
+  function render() {
+    const items = allItems.filter(d => (d[currentMetricKey] || 0) > 0);
 
-    // 2. Calculate dynamic thresholds *for the current metric*
-    const values = items.map(d => d[metricKey]).sort(d3.ascending);
-    const thresholdMed = d3.quantile(values, 0.33) || 0;
-    const thresholdHigh = d3.quantile(values, 0.66) || 0;
+    const values = items.map(d => d[currentMetricKey]).sort(d3.ascending);
+    thresholds.med = d3.quantile(values, 0.33) || 0;
+    thresholds.high = d3.quantile(values, 0.66) || 0;
 
-    // 3. Create dynamic color scales *for the current metric*
-    const interpBrown = d3.interpolateRgb("#D2B48C", "#8B4513");
-    const interpOrange = d3.interpolateRgb("#FFB74D", "#E65100");
-    const interpBlue = d3.interpolateRgb("#64B5F6", "#0D47A1");
+    const highItems = items.filter(d => getCategory(d[currentMetricKey]) === "high");
+    const medItems = items.filter(d => getCategory(d[currentMetricKey]) === "medium");
+    const lowItems = items.filter(d => getCategory(d[currentMetricKey]) === "low");
 
-    getCategory = (value) => {
-      if (value >= thresholdHigh) return "high";
-      if (value >= thresholdMed) return "medium";
-      return "low";
-    };
+    const colorHigh = d3.scaleSequential(interpHigh)
+      .domain([d3.min(highItems, d => d[currentMetricKey]) || thresholds.high,
+      d3.max(highItems, d => d[currentMetricKey]) || thresholds.high]);
 
-    const highItems = items.filter(d => getCategory(d[metricKey]) === 'high');
-    const medItems = items.filter(d => getCategory(d[metricKey]) === 'medium');
-    const lowItems = items.filter(d => getCategory(d[metricKey]) === 'low');
+    const colorMedium = d3.scaleSequential(interpMedium)
+      .domain([d3.min(medItems, d => d[currentMetricKey]) || thresholds.med,
+      d3.max(medItems, d => d[currentMetricKey]) || thresholds.high]);
 
-    const colorHigh = d3.scaleSequential(interpBrown)
-      .domain([d3.min(highItems, d => d[metricKey]) || thresholdHigh, d3.max(highItems, d => d[metricKey]) || thresholdHigh]);
-    const colorMedium = d3.scaleSequential(interpOrange)
-      .domain([d3.min(medItems, d => d[metricKey]) || thresholdMed, d3.max(medItems, d => d[metricKey]) || thresholdHigh]);
-    const colorLow = d3.scaleSequential(interpBlue)
-      .domain([d3.min(lowItems, d => d[metricKey]) || 1, d3.max(lowItems, d => d[metricKey]) || thresholdMed]);
+    const colorLow = d3.scaleSequential(interpLow)
+      .domain([d3.min(lowItems, d => d[currentMetricKey]) || 1,
+      d3.max(lowItems, d => d[currentMetricKey]) || thresholds.med]);
 
-    const getColor = (val) => {
-      if (val >= thresholdHigh) return colorHigh(val);
-      if (val >= thresholdMed) return colorMedium(val);
-      return colorLow(val);
-    };
+    const getColor = v =>
+      (v >= thresholds.high) ? colorHigh(v) :
+        (v >= thresholds.med) ? colorMedium(v) :
+          colorLow(v);
 
+    const itemsForLayout = activeCategory
+      ? items.filter(d => getCategory(d[currentMetricKey]) === activeCategory)
+      : items.slice();
 
-    // 4. Create dynamic size scale
-    const maxVal = d3.max(items, d => d[metricKey]);
+    const maxVal = d3.max(itemsForLayout, d => d[currentMetricKey]) || 1;
     const sizeScale = d3.scaleSqrt().domain([0, maxVal]).range([0, 1000]);
 
-
-    // =================================================================
-    // *** Find Top N per category for labeling ***
-    // =================================================================
-    const N_IMPORTANT = 5;
-    importantNames.clear();
-
-    highItems
-      .sort((a, b) => b[metricKey] - a[metricKey])
-      .slice(0, N_IMPORTANT)
-      .forEach(d => importantNames.add(d.name));
-
-    medItems
-      .sort((a, b) => b[metricKey] - a[metricKey])
-      .slice(0, N_IMPORTANT)
-      .forEach(d => importantNames.add(d.name));
-
-    lowItems
-      .sort((a, b) => b[metricKey] - a[metricKey])
-      .slice(0, N_IMPORTANT)
-      .forEach(d => importantNames.add(d.name));
-    // =================================================================
-
-
-    // 5. Create new packing layout
-    const pack = d3.pack().size([W - legendW, H]).padding(3);
-    const root = d3.hierarchy({ children: items })
-      .sum(d => sizeScale(d[metricKey]));
+    const pack = d3.pack().size([chartW, H]).padding(3);
+    const root = d3.hierarchy({ children: itemsForLayout }).sum(d => sizeScale(d[currentMetricKey]));
     const nodes = pack(root).leaves();
 
-    // 6. D3 Join Pattern (Enter/Update/Exit)
-    const node = g.selectAll("g.node")
-      .data(nodes, d => d.data.name);
 
-    // *** EXIT ***
-    const nodeExit = node.exit()
-      .transition().duration(600);
-    nodeExit.select("circle")
-      .attr("r", 0);
-    nodeExit.select("text")
-      .style("opacity", 0);
-    nodeExit.remove();
+    importantNames.clear();
+    itemsForLayout
+      .sort((a, b) => b[currentMetricKey] - a[currentMetricKey])
+      .slice(0, 20)
+      .forEach(d => importantNames.add(d.name));
 
-    // *** ENTER ***
-    const nodeEnter = node.enter().append("g")
+    const node = g.selectAll("g.node").data(nodes, d => d.data.name);
+    node.exit().transition().duration(300).style("opacity", 0).remove();
+
+    const enter = node.enter().append("g")
       .attr("class", "node")
-      .attr("transform", d => `translate(${d.x}, ${d.y})`);
+      .attr("transform", d => `translate(${d.x},${d.y})`)
+      .style("opacity", 0);
 
-    // Use CSS for stroke/stroke-width (no inline styles here)
-    nodeEnter.append("circle")
-      .attr("r", 0);
+    enter.append("circle")
+      .attr("r", 0)
+      .attr("fill", d => getColor(d.data[currentMetricKey]));
 
-    nodeEnter.append("text")
+    enter.append("text")
       .attr("class", "circle-pack-label")
       .attr("dy", ".35em")
+      .style("text-anchor", "middle")
       .text(d => d.data.name);
 
-    // *** MERGE (Enter + Update) ***
-    const nodeMerge = node.merge(nodeEnter);
+    const nodeMerge = enter.merge(node);
 
-    // 7. Update attributes for all nodes (new and existing)
-    nodeMerge
-      .interrupt()
-      .transition().duration(750)
-      .attr("transform", d => `translate(${d.x}, ${d.y})`);
-
-    // Update circle selection
-    circles = nodeMerge.select("circle")
-      .interrupt()
-      .transition().duration(750)
-      .attr("r", d => d.r)
-      .attr("fill", d => getColor(d.data[metricKey])); // fill must be inline
-
-    // Update label selection
-    labels = nodeMerge.select("text")
-      .interrupt()
-      .transition().duration(750)
+    nodeMerge.transition().duration(400)
       .style("opacity", 1)
-      // The following must remain inline due to dynamic data dependence:
+      .attr("transform", d => `translate(${d.x},${d.y})`);
+
+    nodeMerge.select("circle").transition().duration(400)
+      .attr("r", d => d.r)
+      .attr("fill", d => getColor(d.data[currentMetricKey]));
+
+    nodeMerge.select("text")
+      .text(d => d.data.name)
+      .style("fill", d => getContrastColor(getColor(d.data[currentMetricKey])))
       .style("font-size", d => Math.max(9, Math.min(13, d.r / 3.5)) + "px")
-      .style("fill", d => getContrastColor(getColor(d.data[metricKey])))
-      .style("text-shadow", d => (getContrastColor(getColor(d.data[metricKey])) === "#FFFFFF") ? "0 1px 3px rgba(0,0,0,0.8)" : "none")
       .each(function (d) {
-        const fits = this.getComputedTextLength() < d.r * 1.7;
-        const isImportant = importantNames.has(d.data.name);
-        d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
+        const fits = this.getComputedTextLength() <= d.r * 1.8;
+        const shouldShow = activeCategory ? fits : (fits && importantNames.has(d.data.name));
+        d3.select(this).style("display", shouldShow ? "block" : "none").style("opacity", shouldShow ? 1 : 0);
       });
 
-    // 8. Re-apply listeners
+
+    const itemsForLayoutTotal = d3.sum(itemsForLayout, d => d[currentMetricKey]) || 1;
+    const byVal = [...itemsForLayout].sort((a, b) => b[currentMetricKey] - a[currentMetricKey]);
+    const rankMap = new Map(byVal.map((d, i) => [d.name, i + 1]));
+    const bucketLabel = v => (v >= thresholds.high) ? "High" : (v >= thresholds.med) ? "Medium" : "Low";
+
     nodeMerge.select("circle")
-      .on("mouseenter", function (ev, d) {
+      .style("pointer-events", "all")
+      .on("mouseenter", function (event, d) {
         d3.select(this.parentNode).raise();
-        const isLegendActive = g.classed("legend-active");
-        tip.style("display", "block").style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px")
-          .html(`<b>${d.data.name}</b><br>
-                        Total: ${fmtInt(d.data.total_deaths)}<br>
-                        ${metricKey}: ${fmtInt(d.data[metricKey])}`);
-        if (isLegendActive) return;
 
-        // Use D3 transitions for opacity fade on non-hovered circles
-        circles.interrupt().transition().duration(140).style("opacity", c => c === d ? 1 : 0.2);
-        labels.interrupt().transition().duration(140).style("opacity", c => c === d ? 1 : 0.15);
+        let metricLabel = "Deaths";
+        if (currentMetricKey === "value") metricLabel = "Total Deaths";
+        if (currentMetricKey === "deaths_intrastate") metricLabel = "Intrastate Deaths";
+        if (currentMetricKey === "deaths_onesided") metricLabel = "One-sided Deaths";
+        if (currentMetricKey === "deaths_nonstate") metricLabel = "Non-state Deaths";
+
+        const v = d.data[currentMetricKey] || 0;
+        const pct = (v / itemsForLayoutTotal) * 100;
+        const rank = rankMap.get(d.data.name);
+        const cat = bucketLabel(v);
+
+        const html = `
+          <b>${d.data.name}</b>
+          <div>${metricLabel}: ${fmtInt(v)}</div>
+          <div>Share in view: ${pct.toFixed(1)}%</div>
+          <div>Category: ${cat}</div>
+          <div>Rank in view: #${rank}</div>
+          <div style="margin-top:4px;color:#bbb">Total (all types): ${fmtInt(d.data.total_deaths)}</div>
+        `;
+        showTooltip(tip, event, html);
       })
-      .on("mousemove", ev => tip.style("left", (ev.offsetX + 14) + "px").style("top", (ev.offsetY - 10) + "px"))
-      .on("mouseleave", function (ev, d) {
-        tip.style("display", "none");
-        const isLegendActive = g.classed("legend-active");
-        if (isLegendActive) return;
+      .on("mousemove", (event) => showTooltip(tip, event, tip.html()))
+      .on("mouseleave", () => hideTooltip(tip));
+    /* -------------------------------------------------- */
 
-        // Reset opacity using D3 transition
-        circles.interrupt().transition().duration(140).style("opacity", 0.9);
-        labels.interrupt().transition().duration(140).style("opacity", 1)
-          .each(function (d) {
-            const fits = this.getComputedTextLength() < d.r * 1.7;
-            const isImportant = importantNames.has(d.data.name);
-            d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
-          });
-      });
-
-    // 9. Update Legend (Remove old, draw new)
+    // Legend
     legG.selectAll("*").remove();
-
-    legG.append("text")
-      .attr("class", "legend-title").attr("x", 0).attr("y", 0)
-      .text("Death Toll Categories");
+    legG.append("text").attr("class", "legend-title").attr("x", 0).attr("y", 0).text("Death Toll Categories");
 
     const legendData = [
-      { label: `High (≥${fmtInt(thresholdHigh)})`, color: interpBrown(1), y: 25, category: "high" },
-      { label: `Medium (${fmtInt(thresholdMed)}–${fmtInt(thresholdHigh)})`, color: interpOrange(1), y: 50, category: "medium" },
-      { label: `Low (<${fmtInt(thresholdMed)})`, color: interpBlue(1), y: 75, category: "low" }
+      { label: `High (≥${fmtInt(thresholds.high)})`, color: interpHigh(0), category: "high", y: 25 },
+      { label: `Medium (${fmtInt(thresholds.med)}–${fmtInt(thresholds.high)})`, color: interpMedium(0), category: "medium", y: 50 },
+      { label: `Low (<${fmtInt(thresholds.med)})`, color: interpLow(0), category: "low", y: 75 }
     ];
 
-    legendItems = legG.selectAll("g.legend-item")
-      .data(legendData)
-      .join("g")
-      .attr("class", "legend-item-interactive")
-      .attr("transform", d => `translate(0, ${d.y})`)
-      .attr("opacity", 1);
+    const legendItems = legG.selectAll("g.l-item").data(legendData, d => d.category)
+      .join(enter => {
+        const lg = enter.append("g").attr("class", "legend-item-interactive l-item")
+          .attr("transform", d => `translate(0,${d.y})`)
+          .style("cursor", "pointer");
+        lg.append("circle").attr("cx", 8).attr("cy", 0).attr("r", 8).attr("fill", d => d.color).style("opacity", 0.9);
+        lg.append("text").attr("x", 24).attr("y", 4).text(d => d.label);
+        return lg;
+      });
 
-    legendItems.append("circle")
-      .attr("cx", 8).attr("cy", 0).attr("r", 8)
-      .attr("fill", d => d.color).attr("opacity", 0.9);
-
-    legendItems.append("text")
-      .attr("x", 24).attr("y", 4)
-      .text(d => d.label);
-
-    // 10. Re-bind legend listeners
-
-    svg.select(".svg-background").on("click", function () {
-      activeCategory = null;
-      updateFilter(metricKey);
-    });
-
-    // 11. Re-apply legend filter (if any)
-    updateFilter(metricKey);
+    legendItems
+      .classed("active", d => d.category === activeCategory)
+      .style("opacity", d => (!activeCategory || d.category === activeCategory) ? 1 : 0.3)
+      .on("click", (event, d) => {
+        event.stopPropagation();
+        activeCategory = (activeCategory === d.category) ? null : d.category;
+        render();
+      });
   }
-
-  /**
-   * Function to filter circles based on legend clicks
-   */
-  function updateFilter(metricKey) {
-    if (!circles || !labels) return;
-
-    if (activeCategory === null) {
-      // No category is active, reset everything
-      g.classed("legend-active", false);
-      legendItems.transition().duration(200).attr("opacity", 1.0);
-      circles.transition().duration(200)
-        .attr("opacity", 0.9)
-        .style("pointer-events", "all");
-
-      labels.transition().duration(200)
-        .style("opacity", 1)
-        .each(function (d) {
-          const fits = this.getComputedTextLength() < d.r * 1.7;
-          const isImportant = importantNames.has(d.data.name);
-          d3.select(this).style("display", (fits && isImportant) ? "block" : "none");
-        });
-
-    } else {
-      // A category is active, apply filter
-      g.classed("legend-active", true);
-
-      legendItems.transition().duration(200)
-        .attr("opacity", item => (item.category === activeCategory) ? 1.0 : 0.3);
-
-      circles.transition().duration(200)
-        .attr("opacity", c => {
-          const circleCategory = getCategory(c.data[metricKey]);
-          // Note: Opacity set to 0.9 (default) or 0 (faded) for filtering, not hover.
-          return (circleCategory === activeCategory) ? 0.9 : 0;
-        })
-        .style("pointer-events", c => {
-          const circleCategory = getCategory(c.data[metricKey]);
-          return (circleCategory === activeCategory) ? "all" : "none";
-        });
-
-      labels.transition().duration(200)
-        .style("opacity", c => {
-          const circleCategory = getCategory(c.data[metricKey]);
-          const isImportant = importantNames.has(c.data.name);
-          return (circleCategory === activeCategory && isImportant) ? 1 : 0;
-        });
-    }
-  }
-
-
-  // === 3. BIND EVENT LISTENERS (Initial) ===
 
   d3.selectAll("#chart-6-controls input[name='metric-toggle']")
     .on("change", function () {
-      updatePack(this.value);
+      activeCategory = null;
+      currentMetricKey = this.value;
+      render();
     });
 
-  // === 4. INITIAL DRAW ===
-  updatePack("value");
+  render();
 }
 
-
-/* =================== LOAD DATA & DRAW =================== */
 
 Promise.all([
   d3.csv(DATA_FILE_1, d => ({
@@ -1298,13 +1219,38 @@ Promise.all([
     deaths_interstate: num(d["Cumulative deaths in interstate conflicts"])
   }))
 ]).then(([acled, cum]) => {
-  A1 = acled;
-  A3 = cum;
+  ACLED_DATA = acled;
+  CUMULATIVE_DEATHS_DATA = cum;
 
-  drawChart2();
+  drawChart2(ACLED_DATA);
   drawCirclePacking();
 
 }).catch(e => console.error("Data load error:", e));
+
+
+
+Promise.all([
+  d3.csv(DATA_FILE_1, d => ({
+    Country: str(d.Country), IndexLevel: str(d["Index Level"]), TotalScore: num(d["Total Score"]),
+    Deadliness: num(d["Deadliness Value Scaled"]), Diffusion: num(d["Diffusion Value Scaled"]),
+    Danger: num(d["Danger Value Scaled"]), Fragmentation: num(d["Fragmentation Value Scaled"])
+  })),
+  d3.csv(DATA_FILE_3, d => ({
+    Entity: str(d.Entity), Code: str(d.Code),
+    deaths_intrastate: num(d["Cumulative deaths in intrastate conflicts"]),
+    deaths_onesided: num(d["Cumulative deaths from one-sided violence"]),
+    deaths_nonstate: num(d["Cumulative deaths in non-state conflicts"]),
+    deaths_interstate: num(d["Cumulative deaths in interstate conflicts"])
+  }))
+]).then(([acled, cum]) => {
+  ACLED_DATA = acled;
+  CUMULATIVE_DEATHS_DATA = cum;
+
+  drawChart2(ACLED_DATA);
+  drawCirclePacking();
+
+}).catch(e => console.error("Data load error:", e));
+
 
 /* =================== EndCHART 2,6 –  =================== */
 
