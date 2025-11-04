@@ -628,564 +628,215 @@
   // Chart 6 — Circle packing (interactive)
   // -----------------------
 
-//   function drawCirclePacking() {
-//     const target = "#circle-packing-container";
-//     // Use A1 (ACLED data) instead of A3
-//     if (!A1.length) { createPlaceholder(target, "Circle packing — data not ready"); return; }
-
-//     // --- MODIFIED: Prepare items from A1 data ---
-//     const allItems = A1.map(d => {
-//       return {
-//         name: d.Country,
-//         value: d.TotalScore, // Default sort/size metric
-        
-//         // --- New Story Metrics ---
-//         indexLevel: d.IndexLevel || "Low/Inactive", // This is our new category
-//         totalScore: d.TotalScore,
-//         deadlinessValue: d.Deadliness, // Use the name from A1 loading
-//         dangerValue: d.Danger,
-//         diffusionValue: d.Diffusion,
-//         fragmentationValue: d.Fragmentation,
-//       };
-//     }).filter(d => d.value > 0); // Only show countries with a conflict score
-
-
-//     if (!allItems.length) { createPlaceholder(target, "Circle packing — no data"); return; }
-
-//     const W = 980, H = 560, legendW = 260;
-//     const svg = createSVG(target, W, H);
-//     svg.append("rect").attr("class", "svg-background").attr("width", W - legendW).attr("height", H).style("fill", "none");
-//     const g = svg.append("g");
-//     const legG = svg.append("g").attr("transform", `translate(${W - legendW + 8}, 32)`);
-
-//     const tip = makeTooltip("pack-tip");
-
-//     let activeCategory = null;
-//     let circlesSel, labelsSel, legendItemsSel, getCategoryFn, importantNames = new Set();
-    
-//     // --- MODIFIED: Categorical color scale based on Index Level ---
-//     const color = d3.scaleOrdinal()
-//       .domain(["Extreme", "High", "Medium", "Low/Inactive"]) // Categories from the CSV
-//       .range([theme.primary, theme.accent, "#7b6ce0", "#b7dfc2"]) // Using theme colors
-//       .unknown("#ccc"); // Fallback color
-
-//     function updatePack(metricKey) {
-//       // metricKey is one of: totalScore, deadlinessValue, dangerValue, etc.
-//       const items = allItems.filter(d => (d[metricKey] || 0) > 0);
-//       if (!items.length) { g.selectAll("*").remove(); legG.selectAll("*").remove(); return; }
-      
-//       // --- MODIFIED: Category is now the indexLevel string ---
-//       getCategoryFn = d => d.indexLevel;
-
-//       // --- MODIFIED: Get color from the data object's category ---
-//       const getColor = d => color(d.indexLevel);
-
-//       // size scale (this logic is still valid)
-//       const maxVal = d3.max(items, d => d[metricKey]) || 1;
-//       const sizeScale = d3.scaleSqrt().domain([0, maxVal]).range([4, 70]);
-
-//       // --- MODIFIED: top N per *new* category for labels ---
-//       importantNames.clear();
-//       const topN = 5;
-//       color.domain().forEach(level => { // Iterate over "Extreme", "High", etc.
-//         items.filter(d => getCategoryFn(d) === level)
-//           .sort((a, b) => d3.descending(a[metricKey], b[metricKey]))
-//           .slice(0, topN)
-//           .forEach(d => importantNames.add(d.name));
-//       });
-
-//       // create pack layout
-//       const pack = d3.pack().size([W - legendW - 10, H]).padding(6);
-//       const root = d3.hierarchy({ children: items }).sum(d => sizeScale(d[metricKey]));
-//       const nodes = pack(root).leaves();
-
-//       const node = g.selectAll("g.node").data(nodes, d => d.data.name);
-
-//       // exit
-//       node.exit().transition().duration(500).style("opacity", 0).remove();
-
-//       // enter
-//       const nodeEnter = node.enter().append("g").attr("class", "node").attr("transform", d => `translate(${d.x},${d.y})`);
-//       nodeEnter.append("circle").attr("r", 0).style("stroke", "rgba(0,0,0,0.06)").style("stroke-width", 0.6);
-//       nodeEnter.append("text").attr("class", "pack-label").attr("text-anchor", "middle").attr("dy", ".35em").style("opacity", 0).style("pointer-events", "none").text(d => d.data.name);
-
-//       // merge
-//       const merged = nodeEnter.merge(node);
-//       merged.transition().duration(750).attr("transform", d => `translate(${d.x},${d.y})`);
-
-//       // circles
-//       merged.select("circle").transition().duration(750)
-//           .attr("r", d => d.r)
-//           .attr("fill", d => getColor(d.data)) // MODIFIED
-//           .style("opacity", 0.95);
-
-//       // labels: only show if fits and is important
-//       merged.select("text").transition().duration(750).style("opacity", function (d) {
-//         const txtLen = this.getComputedTextLength();
-//         const fits = txtLen < d.r * 1.6;
-//         return (fits && importantNames.has(d.data.name)) ? 1 : 0;
-//       }).style("font-size", d => Math.max(9, Math.min(14, d.r / 3.5)) + "px")
-//         .style("fill", d => getContrastColor(getColor(d.data))) // MODIFIED
-//         .text(d => d.data.name);
-
-//       // listeners
-//       merged.select("circle")
-//         .on("mouseenter", function (ev, d) {
-//           d3.select(this.parentNode).raise();
-//           // --- MODIFIED: Tooltip content ---
-//           const tipHtml = `<b>${d.data.name}</b>
-//               <br>Index Level: <b style="color:${color(d.data.indexLevel)};">${d.data.indexLevel}</b>
-//               <br>${metricKey}: ${d.data[metricKey].toFixed(3)}`; // Use metricKey
-//           showTip(tip, ev, tipHtml);
-//           // --- End modification ---
-//           merged.select("circle").transition().duration(120).style("opacity", c => c === d ? 1 : 0.18);
-//           merged.select("text").transition().duration(120).style("opacity", c => c === d ? 1 : 0.15);
-//         })
-//         .on("mousemove", ev => showTip(tip, ev, tip.html()))
-//         .on("mouseleave", function () {
-//   hideTip(tip);
-
-//   // Reset circle opacity
-//   merged.select("circle")
-//     .transition().duration(120)
-//     .style("opacity", 0.95);
-
-//   // Correct label fade-back logic
-//   merged.select("text").each(function (d) {
-//     const txtLen = this.getComputedTextLength();
-//     const fits = txtLen < d.r * 1.6;
-//     const visible = (fits && importantNames.has(d.data.name)) ? 1 : 0;
-//     d3.select(this)
-//       .transition().duration(120)
-//       .style("opacity", visible);
-//   });
-// });
-
-
-//       // --- MODIFIED: Legend based on categories ---
-//       const legendData = color.domain().map(level => ({
-//         label: level,
-//         cat: level,
-//         color: color(level)
-//       }));
-
-//       legG.selectAll("*").remove();
-//       legG.append("text").attr("class", "legend-title").attr("x", 0).attr("y", 0)
-//           .style("font-weight", 700).text("Conflict Index Level");
-          
-//       legendItemsSel = legG.selectAll("g.legend-item").data(legendData)
-//           .join("g").attr("transform", (d, i) => `translate(0, ${24 + i * 28})`)
-//           .style("cursor", "pointer");
-          
-//       legendItemsSel.append("circle").attr("r", 8).attr("cx", 8).attr("cy", 0)
-//           .attr("fill", d => d.color);
-          
-//       legendItemsSel.append("text").attr("x", 24).attr("y", 4)
-//           .text(d => d.label).style("fill", theme.secondary);
-//       // --- End modification ---
-
-
-//       // legend interactivity (toggle category)
-//       legendItemsSel.on("click", (ev, d) => {
-//         if (activeCategory === d.cat) activeCategory = null; else activeCategory = d.cat;
-//         applyLegendFilter();
-//       });
-
-//       function applyLegendFilter() {
-//         if (!getCategoryFn) return;
-        
-//         // --- MODIFIED: Get category from d.data ---
-//         const getCat = d => getCategoryFn(d.data);
-
-//         if (!activeCategory) {
-//           merged.select("circle").transition().duration(200).style("opacity", 0.95).style("pointer-events", "all");
-//           legendItemsSel.transition().duration(200).attr("opacity", 1);
-//           merged.select("text").transition().duration(200).style("opacity", d => (importantNames.has(d.data.name) ? 1 : 0)); // Re-apply importance filter
-//         } else {
-//           legendItemsSel.transition().duration(200).attr("opacity", item => (item.cat === activeCategory ? 1 : 0.3));
-//           merged.select("circle").transition().duration(200)
-//               .style("opacity", d => (getCat(d) === activeCategory ? 0.95 : 0)) // MODIFIED
-//               .style("pointer-events", d => (getCat(d) === activeCategory ? "all" : "none")); // MODIFIED
-//           merged.select("text").transition().duration(200)
-//               .style("opacity", d => (getCat(d) === activeCategory && importantNames.has(d.data.name) ? 1 : 0)); // MODIFIED
-//         }
-//       }
-//     } // updatePack
-
-//     // bind metric toggle inputs if present (#chart-6-controls)
-//     const inputs = d3.selectAll("#chart-6-controls input[name='metric-toggle']");
-//     if (!inputs.empty()) {
-//       inputs.on("change", function () {
-//         updatePack(this.value);
-//       });
-//       // Ensure default is checked correctly
-//       const defaultMetric = "totalScore";
-//       inputs.property("checked", function() { return this.value === defaultMetric; });
-//       updatePack(defaultMetric);
-
-//     } else {
-//       // fallback: create minimal control UI inside the container (useful if missing)
-//       const controlWrap = d3.select("#chart-6-controls");
-//       controlWrap.selectAll("*").remove();
-      
-//       // --- MODIFIED: New keys for A1 data ---
-//       const keys = [
-//           {v: "totalScore", label: "Total Score"}, 
-//           {v: "deadlinessValue", label: "Deadliness"}, 
-//           {v: "dangerValue", label: "Danger"}, 
-//           {v: "diffusionValue", label: "Diffusion"},
-//           {v: "fragmentationValue", label: "Fragmentation"}
-//       ];
-      
-//      keys.forEach(k => {
-//   const label = controlWrap.append("label")
-//     .style("margin-right", "12px")
-//     .style("cursor", "pointer");
-
-//   label.append("input")
-//     .attr("type", "radio")
-//     .attr("name", "metric-toggle")
-//     .attr("value", k.v)
-//     .property("checked", k.v === "totalScore");
-
-//   label.append("span").text(" " + k.label);
-// });
-//       d3.selectAll("#chart-6-controls input[name='metric-toggle']").on("change", function () {
-//         updatePack(this.value);
-//       });
-//     }
-
-//     // initial
-//     updatePack("totalScore"); // MODIFIED
-//   }
-function drawCirclePacking() {
-
+  function drawCirclePacking() {
     const target = "#circle-packing-container";
+    // Use A1 (ACLED data) instead of A3
+    if (!A1.length) { createPlaceholder(target, "Circle packing — data not ready"); return; }
 
-    if (!A3.length) { createPlaceholder(target, "Circle packing — data not ready"); return; }
-
-
-
-    // prepare aggregated country totals and components
-
-    const allItems = A3.filter(d => d.Code && d.Entity && d.Entity !== "World").map(d => {
-
-      const intr = +d.deaths_intrastate || 0;
-
-      const one = +d.deaths_onesided || 0;
-
-      const nonst = +d.deaths_nonstate || 0;
-
-      const inter = +d.deaths_interstate || 0;
-
-      const tot = intr + one + nonst + inter;
-
+    // --- MODIFIED: Prepare items from A1 data ---
+    const allItems = A1.map(d => {
       return {
-
-        name: d.Entity,
-
-        value: tot,
-
-        deaths_intrastate: intr,
-
-        deaths_onesided: one,
-
-        deaths_nonstate: nonst,
-
-        deaths_interstate: inter,
-
-        total_deaths: tot
-
+        name: d.Country,
+        value: d.TotalScore, // Default sort/size metric
+        
+        // --- New Story Metrics ---
+        indexLevel: d.IndexLevel || "Low/Inactive", // This is our new category
+        totalScore: d.TotalScore,
+        deadlinessValue: d.Deadliness, // Use the name from A1 loading
+        dangerValue: d.Danger,
+        diffusionValue: d.Diffusion,
+        fragmentationValue: d.Fragmentation,
       };
-
-    }).filter(d => d.value > 0);
-
+    }).filter(d => d.value > 0); // Only show countries with a conflict score
 
 
     if (!allItems.length) { createPlaceholder(target, "Circle packing — no data"); return; }
 
-
-
     const W = 980, H = 560, legendW = 260;
-
     const svg = createSVG(target, W, H);
-
     svg.append("rect").attr("class", "svg-background").attr("width", W - legendW).attr("height", H).style("fill", "none");
-
     const g = svg.append("g");
-
     const legG = svg.append("g").attr("transform", `translate(${W - legendW + 8}, 32)`);
-
-
 
     const tip = makeTooltip("pack-tip");
 
-
-
     let activeCategory = null;
-
     let circlesSel, labelsSel, legendItemsSel, getCategoryFn, importantNames = new Set();
-
-
+    
+    // --- MODIFIED: Categorical color scale based on Index Level ---
+    const color = d3.scaleOrdinal()
+      .domain(["Extreme", "High", "Medium", "Low/Inactive"]) // Categories from the CSV
+      .range([theme.primary, theme.accent, "#7b6ce0", "#b7dfc2"]) // Using theme colors
+      .unknown("#ccc"); // Fallback color
 
     function updatePack(metricKey) {
-
-      // metricKey is one of: total_deaths, deaths_intrastate, deaths_onesided, deaths_nonstate, deaths_interstate
-
-      // filter items with non-zero metric
-
+      // metricKey is one of: totalScore, deadlinessValue, dangerValue, etc.
       const items = allItems.filter(d => (d[metricKey] || 0) > 0);
-
       if (!items.length) { g.selectAll("*").remove(); legG.selectAll("*").remove(); return; }
+      
+      // --- MODIFIED: Category is now the indexLevel string ---
+      getCategoryFn = d => d.indexLevel;
 
+      // --- MODIFIED: Get color from the data object's category ---
+      const getColor = d => color(d.indexLevel);
 
-
-      const values = items.map(d => d[metricKey]).sort(d3.ascending);
-
-      const thresholdMed = d3.quantile(values, 0.33) || 0;
-
-      const thresholdHigh = d3.quantile(values, 0.66) || 0;
-
-
-
-      getCategoryFn = v => (v >= thresholdHigh ? "high" : (v >= thresholdMed ? "medium" : "low"));
-
-
-
-      // color interpolators per group
-
-      const interpHigh = d3.interpolateRgb("#d6a15f", "#7a3b00");
-
-      const interpMed = d3.interpolateRgb("#ffbf80", "#ff7a00");
-
-      const interpLow = d3.interpolateRgb("#9ccae2", "#0d47a1");
-
-
-
-      const colorHigh = d3.scaleSequential(interpHigh).domain([d3.min(items, d => d[metricKey]) || thresholdHigh, d3.max(items, d => d[metricKey]) || thresholdHigh]);
-
-      const colorMed = d3.scaleSequential(interpMed).domain([d3.min(items, d => d[metricKey]) || thresholdMed, d3.max(items, d => d[metricKey]) || thresholdHigh]);
-
-      const colorLow = d3.scaleSequential(interpLow).domain([d3.min(items, d => d[metricKey]) || 1, d3.max(items, d => d[metricKey]) || thresholdMed]);
-
-
-
-      const getColor = v => (v >= thresholdHigh ? colorHigh(v) : (v >= thresholdMed ? colorMed(v) : colorLow(v)));
-
-
-
-      // size scale
-
+      // size scale (this logic is still valid)
       const maxVal = d3.max(items, d => d[metricKey]) || 1;
-
       const sizeScale = d3.scaleSqrt().domain([0, maxVal]).range([4, 70]);
 
-
-
-      // top N per category for labels
-
+      // --- MODIFIED: top N per *new* category for labels ---
       importantNames.clear();
-
       const topN = 5;
-
-      items.filter(d => getCategoryFn(d[metricKey]) === "high").sort((a, b) => d3.descending(a[metricKey], b[metricKey])).slice(0, topN).forEach(d => importantNames.add(d.name));
-
-      items.filter(d => getCategoryFn(d[metricKey]) === "medium").sort((a, b) => d3.descending(a[metricKey], b[metricKey])).slice(0, topN).forEach(d => importantNames.add(d.name));
-
-      items.filter(d => getCategoryFn(d[metricKey]) === "low").sort((a, b) => d3.descending(a[metricKey], b[metricKey])).slice(0, topN).forEach(d => importantNames.add(d.name));
-
-
+      color.domain().forEach(level => { // Iterate over "Extreme", "High", etc.
+        items.filter(d => getCategoryFn(d) === level)
+          .sort((a, b) => d3.descending(a[metricKey], b[metricKey]))
+          .slice(0, topN)
+          .forEach(d => importantNames.add(d.name));
+      });
 
       // create pack layout
-
       const pack = d3.pack().size([W - legendW - 10, H]).padding(6);
-
       const root = d3.hierarchy({ children: items }).sum(d => sizeScale(d[metricKey]));
-
       const nodes = pack(root).leaves();
-
-
 
       const node = g.selectAll("g.node").data(nodes, d => d.data.name);
 
-
-
       // exit
-
       node.exit().transition().duration(500).style("opacity", 0).remove();
 
-
-
       // enter
-
       const nodeEnter = node.enter().append("g").attr("class", "node").attr("transform", d => `translate(${d.x},${d.y})`);
-
       nodeEnter.append("circle").attr("r", 0).style("stroke", "rgba(0,0,0,0.06)").style("stroke-width", 0.6);
-
       nodeEnter.append("text").attr("class", "pack-label").attr("text-anchor", "middle").attr("dy", ".35em").style("opacity", 0).style("pointer-events", "none").text(d => d.data.name);
 
-
-
       // merge
-
       const merged = nodeEnter.merge(node);
-
       merged.transition().duration(750).attr("transform", d => `translate(${d.x},${d.y})`);
 
-
-
       // circles
-
-      merged.select("circle").transition().duration(750).attr("r", d => d.r).attr("fill", d => getColor(d.data[metricKey])).style("opacity", 0.95);
-
-
+      merged.select("circle").transition().duration(750)
+          .attr("r", d => d.r)
+          .attr("fill", d => getColor(d.data)) // MODIFIED
+          .style("opacity", 0.95);
 
       // labels: only show if fits and is important
-
       merged.select("text").transition().duration(750).style("opacity", function (d) {
-
         const txtLen = this.getComputedTextLength();
-
         const fits = txtLen < d.r * 1.6;
-
         return (fits && importantNames.has(d.data.name)) ? 1 : 0;
-
       }).style("font-size", d => Math.max(9, Math.min(14, d.r / 3.5)) + "px")
-
-        .style("fill", d => getContrastColor(getColor(d.data[metricKey])))
-
+        .style("fill", d => getContrastColor(getColor(d.data))) // MODIFIED
         .text(d => d.data.name);
 
-
-
       // listeners
-
       merged.select("circle")
-
         .on("mouseenter", function (ev, d) {
-
           d3.select(this.parentNode).raise();
-
-          showTip(tip, ev, `<b>${d.data.name}</b><br>Total: ${fmtInt(d.data.total_deaths)}<br>${metricKey}: ${fmtInt(d.data[metricKey])}`);
-
+          // --- MODIFIED: Tooltip content ---
+          const tipHtml = `<b>${d.data.name}</b>
+              <br>Index Level: <b style="color:${color(d.data.indexLevel)};">${d.data.indexLevel}</b>
+              <br>${metricKey}: ${d.data[metricKey].toFixed(3)}`; // Use metricKey
+          showTip(tip, ev, tipHtml);
+          // --- End modification ---
           merged.select("circle").transition().duration(120).style("opacity", c => c === d ? 1 : 0.18);
-
           merged.select("text").transition().duration(120).style("opacity", c => c === d ? 1 : 0.15);
-
         })
-
         .on("mousemove", ev => showTip(tip, ev, tip.html()))
-
         .on("mouseleave", function () {
+  hideTip(tip);
 
-          hideTip(tip);
+  // Reset circle opacity
+  merged.select("circle")
+    .transition().duration(120)
+    .style("opacity", 0.95);
 
-          merged.select("circle").transition().duration(120).style("opacity", 0.95);
-
-          merged.select("text").transition().duration(120).style("opacity", 1).each(function (d) {
-
-            // re-evaluate display based on fit + importance
-
-            const txtLen = this.getComputedTextLength();
-
-            const fits = txtLen < d.r * 1.6;
-
-            d3.select(this).style("display", (fits && importantNames.has(d.data.name)) ? "block" : "none");
-
-          });
-
-        });
-
+  // Correct label fade-back logic
+  merged.select("text").each(function (d) {
+    const txtLen = this.getComputedTextLength();
+    const fits = txtLen < d.r * 1.6;
+    const visible = (fits && importantNames.has(d.data.name)) ? 1 : 0;
+    d3.select(this)
+      .transition().duration(120)
+      .style("opacity", visible);
+  });
+});
 
 
-      // legend
-
-      const legendData = [
-
-        { label: `High (≥ ${fmtInt(thresholdHigh)})`, cat: "high", color: interpHigh(1) },
-
-        { label: `Medium (${fmtInt(thresholdMed)}–${fmtInt(thresholdHigh)})`, cat: "medium", color: interpMed(1) },
-
-        { label: `Low (< ${fmtInt(thresholdMed)})`, cat: "low", color: interpLow(1) }
-
-      ];
-
-
+      // --- MODIFIED: Legend based on categories ---
+      const legendData = color.domain().map(level => ({
+        label: level,
+        cat: level,
+        color: color(level)
+      }));
 
       legG.selectAll("*").remove();
-
-      legG.append("text").attr("class", "legend-title").attr("x", 0).attr("y", 0).style("font-weight", 700).text("Death Toll Categories");
-
-      legendItemsSel = legG.selectAll("g.legend-item").data(legendData).join("g").attr("transform", (d, i) => `translate(0, ${24 + i * 28})`).style("cursor", "pointer");
-
-      legendItemsSel.append("circle").attr("r", 8).attr("cx", 8).attr("cy", 0).attr("fill", d => d.color);
-
-      legendItemsSel.append("text").attr("x", 24).attr("y", 4).text(d => d.label).style("fill", theme.secondary);
-
+      legG.append("text").attr("class", "legend-title").attr("x", 0).attr("y", 0)
+          .style("font-weight", 700).text("Conflict Index Level");
+          
+      legendItemsSel = legG.selectAll("g.legend-item").data(legendData)
+          .join("g").attr("transform", (d, i) => `translate(0, ${24 + i * 28})`)
+          .style("cursor", "pointer");
+          
+      legendItemsSel.append("circle").attr("r", 8).attr("cx", 8).attr("cy", 0)
+          .attr("fill", d => d.color);
+          
+      legendItemsSel.append("text").attr("x", 24).attr("y", 4)
+          .text(d => d.label).style("fill", theme.secondary);
+      // --- End modification ---
 
 
       // legend interactivity (toggle category)
-
       legendItemsSel.on("click", (ev, d) => {
-
         if (activeCategory === d.cat) activeCategory = null; else activeCategory = d.cat;
-
         applyLegendFilter();
-
       });
-
-
 
       function applyLegendFilter() {
-
         if (!getCategoryFn) return;
+        
+        // --- MODIFIED: Get category from d.data ---
+        const getCat = d => getCategoryFn(d.data);
 
         if (!activeCategory) {
-
           merged.select("circle").transition().duration(200).style("opacity", 0.95).style("pointer-events", "all");
-
           legendItemsSel.transition().duration(200).attr("opacity", 1);
-
-          merged.select("text").transition().duration(200).style("opacity", 1);
-
+          merged.select("text").transition().duration(200).style("opacity", d => (importantNames.has(d.data.name) ? 1 : 0)); // Re-apply importance filter
         } else {
-
           legendItemsSel.transition().duration(200).attr("opacity", item => (item.cat === activeCategory ? 1 : 0.3));
-
-          merged.select("circle").transition().duration(200).style("opacity", d => (getCategoryFn(d.data[metricKey]) === activeCategory ? 0.95 : 0)).style("pointer-events", d => (getCategoryFn(d.data[metricKey]) === activeCategory ? "all" : "none"));
-
-          merged.select("text").transition().duration(200).style("opacity", d => (getCategoryFn(d.data[metricKey]) === activeCategory && importantNames.has(d.data.name) ? 1 : 0));
-
+          merged.select("circle").transition().duration(200)
+              .style("opacity", d => (getCat(d) === activeCategory ? 0.95 : 0)) // MODIFIED
+              .style("pointer-events", d => (getCat(d) === activeCategory ? "all" : "none")); // MODIFIED
+          merged.select("text").transition().duration(200)
+              .style("opacity", d => (getCat(d) === activeCategory && importantNames.has(d.data.name) ? 1 : 0)); // MODIFIED
         }
-
       }
-
     } // updatePack
 
-
-
     // bind metric toggle inputs if present (#chart-6-controls)
-
     const inputs = d3.selectAll("#chart-6-controls input[name='metric-toggle']");
-
     if (!inputs.empty()) {
-
       inputs.on("change", function () {
-
         updatePack(this.value);
-
       });
+      // Ensure default is checked correctly
+      const defaultMetric = "totalScore";
+      inputs.property("checked", function() { return this.value === defaultMetric; });
+      updatePack(defaultMetric);
 
     } else {
-
       // fallback: create minimal control UI inside the container (useful if missing)
-
       const controlWrap = d3.select("#chart-6-controls");
-
       controlWrap.selectAll("*").remove();
-
-      const keys = [{v:"value", label:"Total deaths"}, {v:"deaths_intrastate", label:"Intrastate"}, {v:"deaths_onesided", label:"One-sided"}, {v:"deaths_nonstate", label:"Non-state"}, {v:"deaths_interstate", label:"Interstate"}];
-
+      
+      // --- MODIFIED: New keys for A1 data ---
+      const keys = [
+          {v: "totalScore", label: "Total Score"}, 
+          {v: "deadlinessValue", label: "Deadliness"}, 
+          {v: "dangerValue", label: "Danger"}, 
+          {v: "diffusionValue", label: "Diffusion"},
+          {v: "fragmentationValue", label: "Fragmentation"}
+      ];
+      
      keys.forEach(k => {
   const label = controlWrap.append("label")
     .style("margin-right", "12px")
@@ -1199,22 +850,15 @@ function drawCirclePacking() {
 
   label.append("span").text(" " + k.label);
 });
-
       d3.selectAll("#chart-6-controls input[name='metric-toggle']").on("change", function () {
-
         updatePack(this.value);
-
       });
-
     }
 
-
-
     // initial
-
-    updatePack("total_deaths" in allItems[0] ? "total_deaths" : "value");
-
+    updatePack("totalScore"); // MODIFIED
   }
+
 
   // -----------------------
   // Chart 7 — Dumbbell plot
@@ -1264,10 +908,9 @@ function drawCirclePacking() {
       .attr("cx", d => x(d.value)).attr("cy", d => y(d.Country) + y.bandwidth() / 2)
       .attr("r", 0).attr("fill", d => metricColor(d.metric)).attr("stroke", "#222").attr("stroke-width", 0.6)
       .on("mouseenter", (ev, d) => { 
-        // --- THIS IS THE FIX ---
-        // Use fmtPct (e.g., "51.9%") instead of fmtShort (e.g., "520m")
+        
         showTip(tip, ev, `<b>${d.Country}</b><br>${d.metric}: ${fmtPct(d.value)}`); 
-        // --- END FIX ---
+       
         d3.select(ev.target).transition().duration(120).attr("r", 10); 
       })
       .on("mousemove", ev => showTip(tip, ev, tip.html()))
