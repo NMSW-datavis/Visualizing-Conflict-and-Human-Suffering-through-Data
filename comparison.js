@@ -246,7 +246,7 @@
       .on("mouseenter", function (ev, d) {
         d3.select(this).transition().duration(160).attr("opacity", 0.9).attr("transform", "translate(0,-3)");
         const tip = makeTooltip("grouped-tip");
-        showTip(tip, ev, `<b>${d.Country}</b><br>${d.Metric}: ${d.Value}`);
+        showTip(tip, ev, `<b>${d.Country}</b><br>${d.Metric}: ${d.Value} <br> TotalScore: ${A1.find(r => r.Country === d.Country).TotalScore}`);
       })
       .on("mousemove", ev => {
         const tip = makeTooltip("grouped-tip");
