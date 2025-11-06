@@ -105,7 +105,7 @@ The datasets informing this project come from respected, openly accessible insti
 
 **Institution:** Università di Genova
 
-**Course:** Data Visualization – Academic Year 2024/2025
+**Course:** Data Visualization – Academic Year 2025/2026
 
 **Instructor:** Annalisa Barla
 
