@@ -100,37 +100,43 @@
 </section>
 
 <section id="data-insights">
-  <h2>Exploring Data Distributions</h2>
-  <p class="section-subtitle">
-    Understanding the underlying structure of conflict data through visual statistics
+  <h2>Patterns in Human Displacement</h2>
+  <p class="section-subtitle">Understanding how conflict reshapes populations across regions</p>
+
+  <p class="section-intro">
+    This section delves deeper into the data — exploring how violence and instability lead to 
+    massive shifts in population, and how these numbers reflect broader humanitarian trends.
+    Through different visual representations, we highlight both the scale and the distribution 
+    of suffering caused by ongoing conflicts.
   </p>
 
-  <p>
-    This section dives deeper into the statistical characteristics of conflict datasets.
-    We use distribution-based visualizations to uncover how violence, displacement, and
-    human suffering are spread across different regions and time periods.
-  </p>
-
-  <div class="charts-grid">
-    <!-- Histogram / Pyramid -->
+  <div class="chart-section">
     <div class="chart-card">
-      <h3>Conflict Intensity Distribution</h3>
-      <p class="chart-description">A histogram showing the frequency of conflict events by intensity level.</p>
-      <img src="./plots/histogram.png" alt="Histogram of conflict intensity" class="chart-img">
+      <h3>Population Displacement by Region</h3>
+      <p class="chart-description">
+        This histogram (population pyramid) compares displaced male and female populations across
+        major conflict zones, showing the demographic imbalance often caused by violence.
+      </p>
+      <img src="charts/histogram-pyramid.png" alt="Population displacement pyramid chart" class="chart-image">
     </div>
 
-    <!-- Violin / Ridgeline Plot -->
     <div class="chart-card">
-      <h3>Regional Variation in Fatalities</h3>
-      <p class="chart-description">A violin plot illustrating how fatality counts vary across selected regions.</p>
-      <img src="./plots/violin.png" alt="Violin plot of fatalities across regions" class="chart-img">
+      <h3>Distribution of Casualty Rates</h3>
+      <p class="chart-description">
+        The violin plot (or ridgeline version) shows the statistical spread of casualty rates
+        among the most affected countries. Wider sections indicate greater variability and 
+        higher uncertainty in the data collected from the field.
+      </p>
+      <img src="charts/violin-plot.png" alt="Violin plot of casualty rates" class="chart-image">
     </div>
 
-    <!-- Boxplot -->
     <div class="chart-card">
-      <h3>Distribution of Monthly Conflicts</h3>
-      <p class="chart-description">A boxplot comparing monthly conflict frequencies over multiple years.</p>
-      <img src="./plots/boxplot.png" alt="Boxplot of monthly conflict distribution" class="chart-img">
+      <h3>Comparative Severity Index</h3>
+      <p class="chart-description">
+        The boxplot summarizes the intensity of conflicts by region — showing median, quartiles,
+        and extreme events. Each box represents a country group affected during the study period.
+      </p>
+      <img src="charts/boxplot.png" alt="Boxplot showing conflict severity index" class="chart-image">
     </div>
   </div>
 </section>
