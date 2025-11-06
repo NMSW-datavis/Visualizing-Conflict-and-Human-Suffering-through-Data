@@ -7,6 +7,7 @@
   --color-secondary: #6b6b6b;
   --color-text: #1f1f1f;
   --color-border: rgba(0, 58, 112, 0.15);
+  
 }
 
 /* Reset and layout */
@@ -359,6 +360,57 @@ section:last-of-type {
   transform: translateX(3px);
 }
 /*end mirror*/
+/* ======================================= */
+/* === Story Card Visual: Dist. Bars === */
+/* ======================================= */
+
+/* This is the main container, same size as your old .compare-split */
+.dist-bars {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Aligns bars to the bottom */
+  gap: 6px; /* Space between bars */
+  width: 80px;
+  height: 60px;
+  padding: 0 12px; /* Give the bars some horizontal space */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  background: linear-gradient(160deg, rgba(0,58,112,0.02), rgba(245,183,163,0.03));
+}
+
+.dist-bars .bar {
+  flex-grow: 1; /* Each bar takes up equal width */
+  background: var(--color-accent); /* Use your accent color */
+  opacity: 0.8;
+  border-radius: 2px 2px 0 0; /* Rounded top corners */
+  
+  /* Fun elastic transition for the animation */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* --- Hover Animation --- */
+
+/* Change bar color and opacity on hover */
+.story-card:hover .dist-bars .bar {
+  opacity: 1;
+  background: var(--color-primary); /* Change to primary color */
+}
+
+/* Animate each bar to a new height */
+.story-card:hover .dist-bars .bar:nth-child(1) {
+  height: 50% !important; /* !important overrides inline style */
+  transition-delay: 0s;
+}
+.story-card:hover .dist-bars .bar:nth-child(2) {
+  height: 80% !important;
+  transition-delay: 0.1s; /* Staggered delay */
+}
+.story-card:hover .dist-bars .bar:nth-child(3) {
+  height: 40% !important;
+  transition-delay: 0.05s; /* Staggered delay */
+}
+/* ======================================= */
 
 /* --- Story Card Styles (shared with comparison section) --- */
 .story-card {
