@@ -75,9 +75,135 @@ Promise.all([
   // =============================
   // 2) BOXPLOT (Placeholder)
   // =============================
-  const boxSVG = createSVG("#boxplot");
-  drawPlaceholder(boxSVG, "Box Plot: Coming Soon");
+  const extreme = indexData.filter(d => d['Index Level'] === 'Extreme');
+  extreme.sort((a, b) => +b['Total Score'] - +a['Total Score']);
+  const top7Extreme = extreme.slice(0, 7).map(d => d.Country);
+  
+  // Prepare data using fatalityData
+  const filtered_box = fatalityData.filter(d => d.fatalities > 0);
+  const top = d3.max(filtered_box.filter(d => top7Extreme.includes(d.country)), d => d.fatalities);
 
+  // Create SVG
+  const boxSVG = createSVG("#boxplot",450);
+
+  // Scales
+  const xBoxFatalities = d3.scaleLinear().domain([0, top]).range([120, 860]);
+  const yBandws = d3.scaleBand().domain(top7Extreme).range([70, 420]).padding(0.45);
+
+  top7Extreme.forEach(country => {
+    // Get all fatality values for the country
+    const vals = filtered_box.filter(d => d.country === country).map(d => d.fatalities).sort(d3.ascending);
+    
+    if (vals.length === 0) return; 
+    
+    // Calculate stats for the box plot and tooltip
+    const min = d3.min(vals);
+    const q1 = d3.quantile(vals, 0.25);
+    const median = d3.quantile(vals, 0.5);
+    const q3 = d3.quantile(vals, 0.75);
+    const max = d3.max(vals);
+    const mean = d3.mean(vals);
+    
+    const tooltipContent = `
+      <b>${country}</b><br>
+      Median: ${d3.format(",")(median)} fatalities<br>
+      Mean: ${d3.format(".0f")(mean)} fatalities<br>
+      Min: ${d3.format(",")(min)} | Q1: ${d3.format(",")(q1)}<br>
+      Q3: ${d3.format(",")(q3)} | Max: ${d3.format(",")(max)}
+    `;
+    
+    const boxGroup = boxSVG.append("g")
+      .attr("transform", `translate(0, ${yBandws(country)})`);
+    
+    // Whiskers (horizontal lines from min to q1 and q3 to max)
+    boxGroup.append("line")
+      .attr("x1", xBoxFatalities(min))
+      .attr("x2", xBoxFatalities(q1))
+      .attr("y1", yBandws.bandwidth() / 2)
+      .attr("y2", yBandws.bandwidth() / 2)
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 1.4);
+    
+    boxGroup.append("line")
+      .attr("x1", xBoxFatalities(q3))
+      .attr("x2", xBoxFatalities(max))
+      .attr("y1", yBandws.bandwidth() / 2)
+      .attr("y2", yBandws.bandwidth() / 2)
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 1.4);
+    
+    // Box
+    boxGroup.append("rect")
+      .attr("x", xBoxFatalities(q1))
+      .attr("y", 0)
+      .attr("width", xBoxFatalities(q3) - xBoxFatalities(q1))
+      .attr("height", yBandws.bandwidth())
+      .attr("fill", "var(--color-accent)")
+      .attr("opacity", 0.82)
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 1.4);
+    
+    // Median line
+    boxGroup.append("line")
+      .attr("x1", xBoxFatalities(median))
+      .attr("x2", xBoxFatalities(median))
+      .attr("y1", 0)
+      .attr("y2", yBandws.bandwidth())
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 2);
+    
+    // Vertical ticks for min and max
+    const tickLength = yBandws.bandwidth() / 4;
+    boxGroup.append("line")
+      .attr("x1", xBoxFatalities(min))
+      .attr("x2", xBoxFatalities(min))
+      .attr("y1", yBandws.bandwidth() / 2 - tickLength / 2)
+      .attr("y2", yBandws.bandwidth() / 2 + tickLength / 2)
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 1.4);
+    
+    boxGroup.append("line")
+      .attr("x1", xBoxFatalities(max))
+      .attr("x2", xBoxFatalities(max))
+      .attr("y1", yBandws.bandwidth() / 2 - tickLength / 2)
+      .attr("y2", yBandws.bandwidth() / 2 + tickLength / 2)
+      .attr("stroke", "var(--color-primary)")
+      .attr("stroke-width", 1.4);
+    
+    // Interactions
+    boxGroup
+      .style("cursor", "pointer")
+      .on("mouseover", function(e) {
+        d3.select(this).select("rect")
+          .transition().duration(150)
+          .attr("fill", "var(--color-primary)")
+          .attr("opacity", 1);
+        showTip(tooltipContent, e);
+      })
+      .on("mouseout", function(e) {
+        d3.select(this).select("rect")
+          .transition().duration(150)
+          .attr("fill", "var(--color-accent)")
+          .attr("opacity", 0.82);
+        hideTip();
+      });
+ 
+    // Add country labels
+    boxSVG.append("text")
+      .attr("x", 110) 
+      .attr("y", yBandws(country) + yBandws.bandwidth() / 2)
+      .attr("text-anchor", "end")
+      .attr("alignment-baseline", "middle")
+      .text(country)
+      .style("fill", "var(--color-text)")
+      .style("font-size", "13px");
+  });
+
+  // Add X-axis
+  boxSVG.append("g")
+    .attr("transform", `translate(0,420)`)
+    .call(d3.axisBottom(xBoxFatalities).ticks(8))
+    .call(styleAxis);
 
   // =============================
   // 3) VIOLIN PLOT (Interactive)
