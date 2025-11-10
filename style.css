@@ -1168,3 +1168,199 @@ svg {
     margin-bottom: 0.8rem; 
     line-height: 1.5;     
 }
+/* Histogram controls */
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-bottom: none; /* Combine with chart */
+  border-radius: 4px 4px 0 0;
+  font-family: var(--font-body);
+}
+
+.chart-controls label {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.chart-controls span {
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 30px; /* Prevents layout shift */
+}
+
+/* =============================
+   Chart Info Box
+   ============================= */
+.chart-info-box {
+ 
+ 
+
+}
+
+.chart-info-box h4 {
+  margin: 0 0 8px 0;
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  font-size: 1.1rem;
+}
+
+.chart-info-box p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.chart-info-box ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+  columns: 2; /* Creates multi-column list */
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  line-height: 1.6;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Style for when a bar is "active" */
+.chart-info-box.is-active {
+   min-height: 100px;
+  padding: 12px 18px;
+  margin-top: 12px;
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-color: rgba(0, 58, 112, 0.4);
+    border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+/* End Chart Info Box */
+/* =============================
+   Chart Controls (Slider)
+   ============================= */
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-bottom: none; /* Combine with chart */
+  border-radius: 4px 4px 0 0;
+  font-family: var(--font-body);
+}
+
+.chart-controls label {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.chart-controls span {
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 30px; /* Prevents layout shift */
+}
+
+/* Styling the range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 250px;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Slider Thumb (Chrome/Safari) */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+}
+
+/* Slider Thumb (Firefox) */
+input[type="range"]::-moz-range-thumb {
+  width: 14px; /* FF needs border included in size */
+  height: 14px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+}
+/* =============================
+   Chart Controls (Slider)
+   ============================= */
+.chart-controls {
+  display: flex;
+  flex-wrap: wrap; /* Allows wrapping on small screens */
+  align-items: center;
+  justify-content: space-around; /* Spaces out the two groups */
+  gap: 20px;
+  padding: 10px 15px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-bottom: none; /* Combines with the chart border */
+  border-radius: 4px 4px 0 0;
+  font-family: var(--font-body);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.control-group label {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.control-group span {
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 30px; /* Prevents layout shift */
+  text-align: right;
+}
+
+/* Styling the range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 200px; /* Narrower to fit both */
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Slider Thumb (Chrome/Safari) */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+}
+
+/* Slider Thumb (Firefox) */
+input[type="range"]::-moz-range-thumb {
+  width: 14px; /* FF needs border included in size */
+  height: 14px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--color-bg);
+}

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Anatomy of Risk: A Data Story</title>
-  
+
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,73 +12,104 @@
 </head>
 
 <body>
-  
   <div class="viz-tooltip"></div>
 
   <header class="site-header comparison-header">
     <div class="container">
       <h1>The Distribution of Suffering</h1>
-      <p class="intro-subtitle">What a conflict 'hot spot' really looks like, told through data.</p>
+      <p class="intro-subtitle">Exploring what conflict “hot spots” truly mean told through data.</p>
       <a href="index.html" class="return-home">← Back to Home</a>
     </div>
   </header>
 
   <main class="container">
 
+    <!-- INTRO -->
     <section id="story-intro">
       <blockquote class="about-quote">
-        “To understand the distribution of suffering, we must first see its contours”
+        “To understand the distribution of suffering, we must first see its contours.”
       </blockquote>
       <p>
-        The world is not uniformly at peace or at war. Instead, conflict exists on a spectrum. Some nations experience low-level, simmering tension, while others are designated as 'Extreme' hot spots.
+        The world is not evenly at peace or at war. Conflict lives on a spectrum from quiet tension to devastating turmoil. Some nations face only sporadic unrest, while others endure relentless instability.
       </p>
       <p>
-        But what does "Extreme" risk truly mean? Is it a constant state of war, or something else? By combining a present-day snapshot with historical data, we can move from a simple list of 'at-risk' countries to a deep understanding of the human experience within them.
+        But what does it mean when a country is labeled as “Extreme” risk? By combining recent conflict data with historical records, we can move beyond simple labels and uncover the lived realities they represent.
       </p>
     </section>
 
+    <!-- HISTOGRAM -->
     <section class="chart-section" id="histogram-section">
       <h2>Part 1: The Global Landscape of Conflict</h2>
       <p>
-        Our analysis begins with a global snapshot of conflict in 2024. The ACLED Conflict Index measures risk based on deadliness, danger, and fragmentation, assigning each country a <strong>Total Score</strong>.
+        We begin with a global snapshot of conflict in 2024. The ACLED Conflict Index assigns each country a <strong>Total Score</strong> based on deadliness, danger, and fragmentation.
       </p>
       <p>
-        This histogram shows the distribution of those scores. It is heavily skewed to the left, revealing a stark reality: while most of the world experiences low conflict (the large cluster), a small number of countries (the long tail on the right) face 'High' and 'Extreme' levels of danger. These are the world's most acute hot spots.
+        The histogram below shows how these scores are distributed worldwide. Notice its sharp skew: while most nations cluster toward stability, a small number the long tail to the right face intense, “Extreme” levels of violence. These are the true global hot spots.
       </p>
+
+      <div class="chart-controls">
+        <div class="control-group">
+          <label for="histogram-range-min">Min Score:</label>
+          <input type="range" id="histogram-range-min" name="histogram-range-min" step="0.1" />
+          <span id="histogram-range-value-min">0.0</span>
+        </div>
+        <div class="control-group">
+          <label for="histogram-range-max">Max Score:</label>
+          <input type="range" id="histogram-range-max" name="histogram-range-max" step="0.1" />
+          <span id="histogram-range-value-max"></span>
+        </div>
+      </div>
+
       <div id="histogram" class="chart-container"></div>
+      <div id="histogram-info" class="chart-info-box"></div>
+
+      <p class="transition-text">
+        From a distance, the world seems calm but those few towering bars on the right remind us how concentrated global suffering truly is.
+      </p>
     </section>
 
+    <!-- BOXPLOT -->
     <section class="chart-section" id="boxplot-section">
       <h2>Part 2: The Human Cost of Volatility</h2>
       <p>
-        Now, we zoom in on the "Extreme" hot spots. To understand the human cost, we turn to historical data, plotting the distribution of <strong>reported civilian fatalities</strong> for each of the top 7 most-affected nations.
+        To understand what “Extreme” looks like on the ground, we turn to the seven most-affected nations. The box plot below shows the distribution of <strong>reported civilian fatalities</strong> across years for each country.
       </p>
       <p>
-        This box plot reveals that 'Extreme' conflict is not one-size-fits-all. The median line (inside the box) shows the 'typical' number of fatalities in a year. The box itself shows the "normal" range of volatility, while the long whiskers show the 'worst-case' years.
+        The median line inside each box marks the “typical” year. The box itself shows normal variation, while the whiskers stretch toward the worst. Some nations have a consistently high median steady tragedy. Others have low medians but long whiskers lives lived on a knife’s edge of volatility.
       </p>
-      <p>
-        Notice how some countries have a high median, showing a <em>consistently</em> high death toll. Others have a lower median but an incredibly tall box and long whiskers. This tells a different story: one of <em>extreme volatility</em>, where life is shattered by catastrophic, outlier years.
-      </p>
+
+      
       <div id="boxplot" class="chart-container"></div>
+
+      <p class="transition-text">
+        Every line, box, and dot here represents lives lost but more importantly, lives lived in uncertainty. Some endure steady loss; others brace for unpredictable catastrophe.
+      </p>
     </section>
 
+    <!-- VIOLIN PLOT -->
     <section class="chart-section" id="violin-section">
-      <h2>Part 3: The Shape of Danger</h2>
+      <h2>Part 3: The Shape of Violence</h2>
       <p>
-        The violin plot gives us the richest detail, showing the <strong>shape</strong> of the data. A wide <strong>belly</strong> means many years had that number of fatalities. A thin, long tail shows rare, extreme events.
+        Beyond averages, the violin plot below reveals the <strong>shape</strong> of violence showing how often different levels of fatalities occurred over time. The wider the section, the more common those outcomes; the thinner, the more exceptional.
       </p>
       <p>
-        Here, we can see the true 'texture' of conflict. Some plots are wide at the bottom (near zero) but have a long, thin tail, confirming the risk of a catastrophic outlier year. Others may have two distinct 'bellies,' suggesting the country flips between 'low-level conflict' and 'all-out war,' with very few years in between.
+        Some nations show a dense cluster at the lower end persistent but low-level violence. Others stretch into long, narrow tails: rare but catastrophic spikes. A few even display <strong>two bulges</strong>, reflecting a cycle that swings between calm and collapse where peace and crisis coexist in uneasy rhythm.
       </p>
+<p> The color gradiant \ also tells a story: the story if the spike is recent or is this a long-standing issue? or is this a country plaged once up on a time with huge spikes that has now found a relative peace. </p>
       <div id="violin" class="chart-container"></div>
+
+      <p class="transition-text">
+        The data’s shape tells us what no average can: for many, survival depends not just on where they live, but on the year they’re born into.
+      </p>
     </section>
 
+    <!-- END -->
     <section id="story-end">
       <blockquote class="about-quote">
-        “Data shows that for civilians in these regions, the threat isn't just the level of conflict, but its volatility and unpredictability.”
+        “For civilians in these regions, danger isn’t constant it’s unpredictable. The threat isn’t only how high the numbers rise, but how suddenly they can.”
       </blockquote>
       <p>
-        A 'hot spot' is not just a place with high numbers; it's a place where the shape of the data itself—the constant risk of a 'normal' year becoming a catastrophic one—defines daily life.
+        “Hot spot” countries aren’t defined solely by conflict intensity, but by instability itself. The data reminds us: volatility is its own form of violence and uncertainty, its cruelest weapon.
       </p>
       <a href="index.html" class="return-home large">← Return to Home</a>
     </section>
