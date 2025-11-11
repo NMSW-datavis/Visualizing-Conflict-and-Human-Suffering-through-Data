@@ -966,6 +966,7 @@ svg {
   margin: 16px auto 24px;
   padding: 10px 0px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-around;
   background: var(--panel);
@@ -1301,7 +1302,6 @@ input[type="range"]::-moz-range-thumb {
    ============================= */
 .chart-controls {
   display: flex;
-  flex-wrap: wrap; /* Allows wrapping on small screens */
   align-items: center;
   justify-content: space-around; /* Spaces out the two groups */
   gap: 20px;
