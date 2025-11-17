@@ -423,19 +423,17 @@
       const avgAll = totalAll / countries.length;
       const avg5 = total5 / countries.length;
 
-      // --- START: MODIFIED LABELS ---
+ 
       const labelMap = {
 //         highestOverall: `Top 20 countries (by all-time fatalities) shown for ${cutoff}–${maxYear}`,
         highest5: `Top 20 countries by civilian fatalities in the last 5 years (${cutoff}–${maxYear})`,
 //         lowestOverall: `20 countries (by all-time non-zero fatalities) shown for ${cutoff}–${maxYear}`,
         lowest5: `20 countries with smallest non-zero civilian fatalities in the last 5 years (${cutoff}–${maxYear})`
       };
-      // --- END: MODIFIED LABELS ---
 
 //       let summaryHTML = `<div><strong>${labelMap[mode]}</strong></div>`;
-      // Show both stats for all modes now, as it's relevant context
       summaryHTML += `<div style="margin-top:8px;">
-        <span style="color:${theme.primary}; font-weight:600;">Reported Fatalities (Last 5 Years): ${fmtInt(total5)}</span>
+         <span style="color:${theme.primary}; font-weight:600;">Reported Fatalities (Last 5 Years): ${fmtInt(total5)}</span>
         <span style="color:${theme.secondary}; font-weight:400;">(avg ${fmtShort(avg5)} per country)</span><br>
       </div>`;
       
@@ -525,9 +523,7 @@
    
 
     const data = A3;
-     console.log('drawWaffle called, data length:', data.length);
-    console.log('Available regions in data:', data.map(d => d.Entity));
-    console.log('Selected region:', data);
+ 
     const regions = ["World", "Africa", "Asia and Oceania", "Middle East", "Europe", "Americas"];
     const controlsWrap = d3.select("#waffle-controls");
     const chartContainer = d3.select("#waffle-chart-container");
@@ -943,14 +939,13 @@
 
     const x = d3.scaleLinear().domain([0, 1]).range([m.l, svgW - m.r]);
 
-    // --- START FIX ---
+   
     // The 'flat' and 'd3.index' steps were over-complicating the stack.
     // d3.stack() can take the 'data' array directly.
     const series = d3.stack()
         .keys(keys)
         .offset(d3.stackOffsetExpand) // This creates the 100% bar
-        (data); // <-- FIX 1: Just pass 'data' directly
-    // --- END FIX ---
+        (data); 
 
     const y = d3.scaleBand().domain(data.map(d => d.Entity)).range([m.t, H - m.b]).padding(0.14);
     const color = d3.scaleOrdinal().domain(keys).range([theme.primary, theme.accent, "#9ccae2", "#b7dfc2"]);
@@ -959,7 +954,7 @@
     const rects = group.selectAll("g.layer").data(series).join("g").attr("fill", d => color(d.key))
       .selectAll("rect").data(d => d).join("rect")
       .attr("x", d => x(d[0]))
-      .attr("y", d => y(d.data.Entity)) // <-- FIX 2: Access country name with d.data.Entity
+      .attr("y", d => y(d.data.Entity)) 
       .attr("width", d => Math.max(0, x(d[1]) - x(d[0]))) // Use 0, not 1, for empty
       .attr("height", y.bandwidth());
 
@@ -968,7 +963,7 @@
       // Get the key from the parent 'g' node, which represents the series
       const key = d3.select(ev.target.parentNode).datum().key; 
       const perc = (d[1] - d[0]) * 100;
-      const tot = d.data.total; // <-- FIX 3: Get total directly from d.data
+     const tot = d.data.total; 
       showTip(tip, ev, `<b>${d.data.Entity}</b> (Total: ${fmtInt(tot)})<br><span style="color:${color(key)}">■</span> ${key}: ${perc.toFixed(1)}%`); // <-- FIX 4: Use d.data.Entity and the 'key' variable
     }).on("mousemove", ev => showTip(tip, ev, tip.html())).on("mouseleave", () => hideTip(tip));
 

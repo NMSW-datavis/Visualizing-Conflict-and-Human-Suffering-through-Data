@@ -144,12 +144,13 @@ Promise.all([
         const countries = d.countries.length
           ? `<ul>${d.countries.map(c => `<li>${c}</li>`).join("")}</ul>`
           : `<p>No countries in this range.</p>`;
+          histInfoBox.style("display", "block");
         histInfoBox.html(`<h4>${d.length} countries (Score ${d.x0.toFixed(1)}–${d.x1.toFixed(1)})</h4>${countries}`);
         showTip(`<b>Score:</b> ${d.x0.toFixed(1)}–${d.x1.toFixed(1)}<br>${d.length} countries`, e, this);
       })
       .on("mouseout blur", function () {
         d3.select(this).attr("fill", COLOR_ACCENT);
-        histInfoBox.html(``);
+        // histInfoBox.style("display", "none");
         hideTip();
       });
 

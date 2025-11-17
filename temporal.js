@@ -30,7 +30,7 @@
   }
   raw.forEach(d => { d.Region = regionMap[d.Country] || "Other"; });
 
-  // --- 3. TOOLTIP (Fixed Global) ---
+  
   const tooltip = d3.select("#tooltip")
     .style("position", "fixed")
     .style("z-index", "9999999")
@@ -113,7 +113,7 @@
              
              const valStr = v.Fatalities === 0 ? "0 fatalities (Peace)" : `<strong>${v.Fatalities.toLocaleString()}</strong> fatalities`;
              
-             // FIX: Reset transform and use client coordinates
+             
              tooltip.style("display","block")
                     .style("opacity",1)
                     .style("transform", "none") 
@@ -122,7 +122,7 @@
                     .style("top", (e.clientY + 15) + "px");
           })
           .on("mousemove", (e) => {
-             // FIX: Update position using client coordinates to match 'position: fixed'
+             
              tooltip.style("left", (e.clientX + 15) + "px")
                     .style("top", (e.clientY + 15) + "px");
           })
@@ -202,7 +202,7 @@
     d3.select("#topN").on("change", () => { reset(); applyFilters(); });
     d3.select("#regionSelect").on("change", () => { reset(); applyFilters(); });
     d3.select("#searchBox").on("input", () => { reset(); applyFilters(); });
-    d3.select("#resetBtn").on("click", () => {
+    d3.select("#radial-reset").on("click", () => {
       d3.select("#searchBox").property("value","");
       d3.select("#topN").property("value","25");
       d3.select("#regionSelect").property("value","all");
@@ -273,7 +273,6 @@
          // ... inside streamgraph mousemove ...
 
          // Show Tooltip
-         // FIX: Reset transform and use client coordinates
          tooltip.style("display","block")
            .style("opacity",1)
            .style("transform", "none")
