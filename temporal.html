@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pulse of Conflict: A Data Story</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+
+</head> 
+<body>
+
+  <div class="viz-tooltip" id="tooltip"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <h1>The Pulse of Conflict</h1>
+      <p class="intro-subtitle">Mapping the contours of civilian suffering across time and geography.</p>
+      <a href="index.html" class="return-home">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section>
+      <blockquote class="about-quote">
+        “Violence does not simply happen; it evolves. To understand the distribution of suffering, we must look beyond the map and examine the timeline.”
+      </blockquote>
+      <p class="drop-cap">
+        For decades, we have measured conflict by its location. We pin distinct red dots on static maps, marking a crisis in the Sahel, a war in Eastern Europe, or an insurgency in Southeast Asia. But a map is a snapshot of a single moment, and conflict is rarely static. It is a living, breathing entity that expands, contracts, and migrates over time.
+      </p>
+      
+      
+
+      <p>
+        By analyzing reported civilian fatality data from the last 28 years, a different picture emerges—not one of isolated incidents, but of distinct rhythms. Some conflicts resemble a slow, rising tide, eroding stability over decades. Others appear as sudden, catastrophic waves that crash and recede.
+      </p>
+    </section>
+
+    <div class="chart-wrapper">
+      <h2> Tracing Conflict Through Time</h2>
+      <p>
+        In the radial visualization below, time spirals outward. The center represents the late 1990s, while the outer edge brings us to the present day. Each country traces a path through this temporal tunnel, revealing its unique fingerprint of volatility. 
+      </p>
+      <p>
+        <strong>Solid dots</strong> represent years with reported fatalities. <strong>Hollow rings</strong> indicate years of relative peace. Notice the difference between the long, chronic arcs in Africa and the explosive, sudden spikes in the Middle East.
+      </p>
+
+      <div class="chart-controls" id="radial-controls">
+    <div class="control-group" id="radial-control-group">
+      <label for="searchBox">Search:</label>
+      <input type="search" id="searchBox" placeholder="e.g. Nigeria..." />
+    </div>
+
+    <div class="control-group" id="radial-filter-group">
+      <label for="topN">Filter:</label>
+      <select id="topN">
+        <option value="10">Top 10 Deadliest</option>
+        <option value="25" selected>Top 25 Deadliest</option>
+        <option value="50">Top 50</option>
+        <option value="all">All Countries</option>
+      </select>
+    </div>
+
+    <div class="control-group" id="radial-region-group">
+      <label for="regionSelect">Region:</label>
+      <select id="regionSelect">
+        <option value="all">All Regions</option>
+      </select>
+    </div>
+
+    <button id="radial-reset" class="btn-reset">Reset View</button>
+</div>
+      <div class="chart-container" id="radial-chart" style="position: relative;">
+        <div class="chart-info-box" id="infoPanel">
+          <h4 id="infoTitle">Country</h4>
+          <div id="infoStats"></div>
+          <svg class="sparkline" id="sparkline"></svg>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--color-secondary); margin-top:0.8rem;">
+        <em>Interactive: Click a country line to lock the view. Hover to see details.</em>
+      </p>
+    </div>
+
+    <section>
+      <h2>The Drifting Center of Gravity</h2>
+      <p>
+        If the radial view shows us the <em>history</em> of specific nations, we must also look at the <em>geography</em> of global pain. Conflict is rarely contained within borders; it spills over, shifting its center of gravity from one region to another as geopolitical tides turn.
+      </p>
+      <p>
+        The streamgraph below treats the data as a fluid. It aggregates fatalities by region, visualizing the displacement of violence over the last three decades. In the late 1990s, the chart is dominated by the aftermath of Cold War proxy battles in Sub-Saharan Africa. As we move into the 2010s, the focus shifts dramatically to the <strong>Middle East</strong> (Purple) during the Arab Spring, before shifting again with new escalations in Europe and Africa.
+      </p>
+      
+    </section>
+
+    <div class="chart-wrapper">
+      <div class="chart-container" id="streamgraph"></div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--color-secondary); margin-top:0.8rem;">
+        <em>Global civilian fatalities by region (1997–2025).</em>
+      </p>
+    </div>
+
+    <section>
+      <p>
+        The data serves as a stark reminder: peace in one region is often concurrent with escalation in another. The total volume of suffering does not always decrease; it merely moves.
+      </p>
+
+      <blockquote class="about-quote">
+        “Data can quantify the loss, but it cannot quantify the grief. Every pixel in these charts represents a life disrupted, a family broken, and a future stolen.”
+      </blockquote>
+    </section>
+
+    <div style="text-align:center; margin-bottom: 4rem;">
+       <a href="index.html" class="return-home large">← Return To Home </a>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+       <a href="https://id.unige.it/" class="footer-logo" title="Università di Genova Styleguide">
+        <img src="./logo-colore.png" alt="unige logo" />
+      </a>
+      <p>Università di Genova – Data Visualization Course • For educational and informational purposes only</p>
+    </div>
+  </footer>
+
+  <script src="temporal.js"></script>
+</body>
+</html>
