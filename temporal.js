@@ -117,7 +117,7 @@
              tooltip.style("display","block")
                     .style("opacity",1)
                     .style("transform", "none") 
-                    .html(`<strong>${d.name}</strong> ${v.Year}<br>${valStr}`)
+                    .html(`<strong>${d.name}</strong> ${v.Year}<br>${valStr} <br><span style="font-size:0.9em; color:#666;">click on the circle for more detail </span>`)
                     .style("left", (e.clientX + 15) + "px")
                     .style("top", (e.clientY + 15) + "px");
           })
