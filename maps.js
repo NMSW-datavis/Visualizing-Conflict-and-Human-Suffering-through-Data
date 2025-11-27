@@ -60,6 +60,19 @@
     "Myanmar": "Myanmar",
     "UK": "United Kingdom"
   };
+  const regionColors = {
+    "Africa": "#e67e22", "Middle East": "#8e44ad", "Americas": "#c0392b",
+    "Asia": "#2980b9", "Europe": "#27ae60", "Oceania": "#16a085", "Other": "#95a5a6"
+  };
+
+  const regionMap = {
+    "Algeria": "Africa", "Angola": "Africa", "Benin": "Africa", "Botswana": "Africa", "Burkina Faso": "Africa", "Burundi": "Africa", "Cameroon": "Africa", "Cape Verde": "Africa", "Central African Republic": "Africa", "Chad": "Africa", "Comoros": "Africa", "Democratic Republic of Congo": "Africa", "Republic of Congo": "Africa", "Djibouti": "Africa", "Egypt": "Africa", "Equatorial Guinea": "Africa", "Eritrea": "Africa", "eSwatini": "Africa", "Ethiopia": "Africa", "Gabon": "Africa", "Gambia": "Africa", "Ghana": "Africa", "Guinea": "Africa", "Guinea-Bissau": "Africa", "Ivory Coast": "Africa", "Kenya": "Africa", "Lesotho": "Africa", "Liberia": "Africa", "Libya": "Africa", "Madagascar": "Africa", "Malawi": "Africa", "Mali": "Africa", "Mauritania": "Africa", "Mauritius": "Africa", "Mayotte": "Africa", "Morocco": "Africa", "Mozambique": "Africa", "Namibia": "Africa", "Niger": "Africa", "Nigeria": "Africa", "Reunion": "Africa", "Rwanda": "Africa", "Saint Helena, Ascension and Tristan da Cunha": "Africa", "Sao Tome and Principe": "Africa", "Senegal": "Africa", "Seychelles": "Africa", "Sierra Leone": "Africa", "Somalia": "Africa", "South Africa": "Africa", "South Sudan": "Africa", "Sudan": "Africa", "Tanzania": "Africa", "Togo": "Africa", "Tunisia": "Africa", "Uganda": "Africa", "Zambia": "Africa", "Zimbabwe": "Africa",
+    "Anguilla": "Americas", "Antigua and Barbuda": "Americas", "Argentina": "Americas", "Aruba": "Americas", "Bahamas": "Americas", "Barbados": "Americas", "Belize": "Americas", "Bermuda": "Americas", "Bolivia": "Americas", "Brazil": "Americas", "British Virgin Islands": "Americas", "Canada": "Americas", "Caribbean Netherlands": "Americas", "Cayman Islands": "Americas", "Chile": "Americas", "Colombia": "Americas", "Costa Rica": "Americas", "Cuba": "Americas", "Curacao": "Americas", "Dominica": "Americas", "Dominican Republic": "Americas", "Ecuador": "Americas", "El Salvador": "Americas", "Falkland Islands": "Americas", "French Guiana": "Americas", "Greenland": "Americas", "Grenada": "Americas", "Guadeloupe": "Americas", "Guatemala": "Americas", "Guyana": "Americas", "Haiti": "Americas", "Honduras": "Americas", "Jamaica": "Americas", "Martinique": "Americas", "Mexico": "Americas", "Montserrat": "Americas", "Nicaragua": "Americas", "Panama": "Americas", "Paraguay": "Americas", "Peru": "Americas", "Puerto Rico": "Americas", "Saint Kitts and Nevis": "Americas", "Saint Lucia": "Americas", "Saint Pierre and Miquelon": "Americas", "Saint Vincent and the Grenadines": "Americas", "Saint-Barthelemy": "Americas", "Saint-Martin": "Americas", "Sint Maarten": "Americas", "Suriname": "Americas", "Trinidad and Tobago": "Americas", "Turks and Caicos Islands": "Americas", "United States": "Americas", "United States Minor Outlying Islands": "Americas", "Uruguay": "Americas", "Venezuela": "Americas", "Virgin Islands, U.S.": "Americas",
+    "Afghanistan": "Asia", "Bangladesh": "Asia", "Bhutan": "Asia", "British Indian Ocean Territory": "Asia", "Brunei": "Asia", "Cambodia": "Asia", "China": "Asia", "East Timor": "Asia", "Hong Kong": "Asia", "India": "Asia", "Indonesia": "Asia", "Japan": "Asia", "Kazakhstan": "Asia", "Kyrgyzstan": "Asia", "Laos": "Asia", "Macau": "Asia", "Malaysia": "Asia", "Maldives": "Asia", "Mongolia": "Asia", "Myanmar": "Asia", "Nepal": "Asia", "North Korea": "Asia", "Pakistan": "Asia", "Philippines": "Asia", "Singapore": "Asia", "South Korea": "Asia", "Sri Lanka": "Asia", "Taiwan": "Asia", "Tajikistan": "Asia", "Thailand": "Asia", "Turkmenistan": "Asia", "Uzbekistan": "Asia", "Vietnam": "Asia",
+    "Akrotiri and Dhekelia": "Europe", "Albania": "Europe", "Andorra": "Europe", "Austria": "Europe", "Belarus": "Europe", "Belgium": "Europe", "Bosnia and Herzegovina": "Europe", "Bulgaria": "Europe", "Croatia": "Europe", "Cyprus": "Europe", "Czech Republic": "Europe", "Denmark": "Europe", "Estonia": "Europe", "Faroe Islands": "Europe", "Finland": "Europe", "France": "Europe", "Germany": "Europe", "Gibraltar": "Europe", "Greece": "Europe", "Bailiwick of Guernsey": "Europe", "Hungary": "Europe", "Iceland": "Europe", "Ireland": "Europe", "Isle of Man": "Europe", "Italy": "Europe", "Bailiwick of Jersey": "Europe", "Kosovo": "Europe", "Latvia": "Europe", "Liechtenstein": "Europe", "Lithuania": "Europe", "Luxembourg": "Europe", "Malta": "Europe", "Moldova": "Europe", "Monaco": "Europe", "Montenegro": "Europe", "Netherlands": "Europe", "North Macedonia": "Europe", "Norway": "Europe", "Poland": "Europe", "Portugal": "Europe", "Romania": "Europe", "Russia": "Europe", "San Marino": "Europe", "Serbia": "Europe", "Slovakia": "Europe", "Slovenia": "Europe", "Spain": "Europe", "Sweden": "Europe", "Switzerland": "Europe", "Ukraine": "Europe", "United Kingdom": "Europe", "Vatican City": "Europe",
+    "Armenia": "Middle East", "Azerbaijan": "Middle East", "Bahrain": "Middle East", "Georgia": "Middle East", "Iran": "Middle East", "Iraq": "Middle East", "Israel": "Middle East", "Jordan": "Middle East", "Kuwait": "Middle East", "Lebanon": "Middle East", "Oman": "Middle East", "Palestine": "Middle East", "Qatar": "Middle East", "Saudi Arabia": "Middle East", "Syria": "Middle East", "Turkey": "Middle East", "United Arab Emirates": "Middle East", "Yemen": "Middle East",
+    "American Samoa": "Oceania", "Australia": "Oceania", "Christmas Island": "Oceania", "Cocos (Keeling) Islands": "Oceania", "Cook Islands": "Oceania", "Fiji": "Oceania", "French Polynesia": "Oceania", "Guam": "Oceania", "Heard Island and McDonald Islands": "Oceania", "Kiribati": "Oceania", "Marshall Islands": "Oceania", "Micronesia": "Oceania", "Nauru": "Oceania", "New Caledonia": "Oceania", "New Zealand": "Oceania", "Niue": "Oceania", "Norfolk Island": "Oceania", "Northern Mariana Islands": "Oceania", "Palau": "Oceania", "Papua New Guinea": "Oceania", "Pitcairn": "Oceania", "Samoa": "Oceania", "Solomon Islands": "Oceania", "Tokelau": "Oceania", "Tonga": "Oceania", "Tuvalu": "Oceania", "Vanuatu": "Oceania", "Wallis and Futuna": "Oceania"
+  };
 
   // -------------------------------------------
   // 2. LOAD DATA
@@ -83,6 +96,15 @@
 
   const grouped = d3.group(rawCsv, d => (d.Country || "").trim());
   const processedData = [];
+const timeData = rawCsv.map(d => {
+    const cName = (d.Country || "").trim();
+    return {
+      country: cName,
+      year: +d.Year,
+      fatalities: +d.Fatalities,
+      region: regionMap[cName] || "Other" 
+    };
+  }).filter(d => d.fatalities > 0);
 
   for (const [country, records] of grouped) {
     const getVal = (year) => {
@@ -390,18 +412,152 @@
   }
 
   // -------------------------------------------
+  //  CHART 2: TIME SLIDER BUBBLE MAP (NEW)
+  // -------------------------------------------
+  function initTimeSliderMap() {
+    const container = d3.select("#bubble-map"); 
+    if(container.empty()) return;
+
+    container.html("");
+    const w = container.node().clientWidth;
+    const h = container.node().clientHeight;
+
+    const svg = container.append("svg").attr("width", w).attr("height", h).attr("viewBox", `0 0 ${w} ${h}`);
+    const gMap = svg.append("g");
+    const gBubbles = svg.append("g");
+
+    const projection = d3.geoNaturalEarth1().fitSize([w, h], geoClean);
+    const path = d3.geoPath().projection(projection);
+
+    // 1. Draw Base Map
+    gMap.selectAll("path")
+      .data(geoClean.features)
+      .join("path")
+      .attr("d", path)
+      .attr("fill", "#f0f0f0")
+      .attr("stroke", "#ddd")
+      .attr("stroke-width", 0.5);
+
+    // 2. Bubble Scale
+    const maxFatalitiesAllTime = d3.max(timeData, d => d.fatalities) || 10000;
+    const radiusScale = d3.scaleSqrt().domain([0, maxFatalitiesAllTime]).range([0, 35]);
+
+    // 3. Update Function
+    function update(year) {
+        d3.select("#current-year").text(year);
+        
+        const yearData = timeData.filter(d => d.year === year);
+        
+        const mapData = yearData.map(d => {
+            const feature = geoClean.features.find(f => {
+                const mapped = nameMapping[d.country] || d.country;
+                return mapped === f.properties.name || d.country === f.properties.name;
+            });
+            if(feature) {
+                const c = path.centroid(feature);
+                return { ...d, x: c[0], y: c[1] };
+            }
+            return null;
+        }).filter(d => d); 
+
+        const circles = gBubbles.selectAll("circle")
+            .data(mapData, d => d.country);
+
+        // Exit
+        circles.exit().transition().duration(300).attr("r", 0).remove();
+
+        // Enter
+        const enter = circles.enter().append("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", 0)
+            // 👇 هنا التغيير: استخدام الألوان حسب المنطقة 👇
+            .attr("fill", d => regionColors[d.region] || "#95a5a6") 
+            .attr("opacity", 0.7)
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 0.5);
+
+        // Update
+        circles.merge(enter)
+            .on("mouseenter", (e, d) => {
+                showTooltip(e, `<b>${d.country}</b><br>Year: ${d.year}<br>Fatalities: ${d.fatalities.toLocaleString()}<br>Region: ${d.region}`);
+                d3.select(e.target).attr("stroke", "#333").attr("opacity", 1);
+            })
+            .on("mouseleave", (e) => {
+                hideTooltip();
+                d3.select(e.target).attr("stroke", "#fff").attr("opacity", 0.7);
+            })
+            .transition().duration(500)
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", d => radiusScale(d.fatalities));
+    }
+
+    // 4. Initialize Controls
+    const slider = d3.select("#year-slider");
+    const playBtn = d3.select("#play-button");
+    let timer;
+    let isPlaying = false;
+
+    update(+slider.property("value"));
+
+    slider.on("input", function() {
+        update(+this.value);
+        if(isPlaying) stopAnimation();
+    });
+
+    playBtn.on("click", () => {
+        if(isPlaying) stopAnimation();
+        else startAnimation();
+    });
+
+    function startAnimation() {
+        isPlaying = true;
+        playBtn.text("Pause");
+        playBtn.style("background", "#c0392b");
+        playBtn.style("color", "white");
+        
+        timer = setInterval(() => {
+            let val = +slider.property("value");
+            let max = +slider.attr("max");
+            if(val >= max) val = +slider.attr("min");
+            else val++;
+            slider.property("value", val);
+            update(val);
+        }, 800);
+    }
+
+    function stopAnimation() {
+        isPlaying = false;
+        playBtn.text("Play Timeline");
+        playBtn.style("background", "#1f3b64");
+        clearInterval(timer);
+    }
+
+    attachZoomControls({
+      svg, container, width: w, height: h,
+      renderCallback: (t) => {
+        gMap.attr("transform", t);
+        gMap.selectAll("path").attr("stroke-width", 0.5 / t.k);
+        gBubbles.attr("transform", t);
+      }
+    });
+  }
+
+  // -------------------------------------------
   // 8. INITIALIZATION
   // -------------------------------------------
   initChoropleth();
-  initSymbolMap();
+  initTimeSliderMap();
   initDensityMap();
+ 
 
   let rt;
   window.addEventListener("resize", () => {
     clearTimeout(rt);
     rt = setTimeout(() => {
       initChoropleth();
-      initSymbolMap();
+      initTimeSliderMap();
       initDensityMap();
     }, 250);
   });

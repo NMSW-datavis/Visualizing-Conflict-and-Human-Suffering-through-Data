@@ -61,15 +61,29 @@
 
       
       <p class="article">
-        However, a static map can be misleading.
+       However, a static map can be misleading. It captures a snapshot, but conflict is rarely static; it is a living entity that migrates.
         
       </p>
 
       <!-- sebah commented this enter your text above  -->
 
       <p class="article">
-        enyter your text here
+        To understand the true nature of risk, we must look at <strong>time</strong>. Over the last three decades, the epicenter of human suffering has drifted like a storm system. From the post-Cold War battles in Sub-Saharan Africa to the explosive upheavals of the Arab Spring and the re-emergence of state-based warfare in Europe.
         </p>
+
+        <div class="chart-wrapper">
+        <div class="slider-container" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <button id="play-button" style="background: var(--color-primary, #1f3b64); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-family: inherit;">Play Timeline</button>
+            <span id="current-year" style="font-weight: bold; font-family: 'Roboto Slab'; font-size: 1.2rem; min-width: 50px; text-align: center;">1997</span>
+            <input type="range" id="year-slider" min="1997" max="2024" value="1997" step="1" style="flex-grow: 1;">
+        </div>
+
+        <div id="bubble-map" class="map-container"></div>
+        
+        <div class="viz-caption">
+           <p style="text-align: center; margin-top: 5px;"><em>Size of circles represents cumulative fatalities per year.</em></p>
+        </div>
+      </div>
         
         <!-- <p class="article">A country with high fatalities might be stabilizing, while a peaceful nation might be on the brink of collapse. To understand <strong>risk</strong>, we must look at momentum.
       </p>
