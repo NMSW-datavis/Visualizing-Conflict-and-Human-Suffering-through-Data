@@ -1026,4 +1026,81 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     text-align: right;
     padding-right: 2px;
+/* --- Map dimensions --- */
+.map-section {
+    margin: 40px 0;
+    padding: 20px;
+    background-color: #fff; 
+    border-radius: 8px;
+}
+
+.map-container {
+    height: 500px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+/* ---  Map icon (UPDATED) --- */
+
+/* =========================================
+   New Icon: Stylized Globe
+   ========================================= */
+
+/* Main container for the visual element */
+.map-visual {
+    background-color: #f0f4f8; /* Light blue/grey background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 1. Globe Outer Circle */
+.globe-icon {
+    width: 44px;
+    height: 44px;
+    border: 2px solid #003a70; /* Deep Blue (Default state) */
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden; /* Clips lines that go outside */
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 2. Vertical Lines (Meridians) */
+.globe-inner {
+    position: absolute;
+    top: -2px; bottom: -2px;
+    left: 10px; right: 10px;
+    border: 1.5px solid #003a70;
+    border-radius: 50%; /* Creates the curved 3D effect */
+    transition: border-color 0.5s ease;
+}
+
+/* 3. Horizontal Line (Equator) */
+.globe-equator {
+    position: absolute;
+    top: 50%;
+    left: -5px; right: -5px;
+    height: 0;
+    border-top: 2px solid #003a70;
+    transform: translateY(-50%);
+    transition: border-color 0.5s ease;
+}
+
+/* --- HOVER EFFECTS --- */
+
+/* A. Change all lines to Accent Color (Coral) */
+.story-card:hover .globe-icon,
+.story-card:hover .globe-inner,
+.story-card:hover .globe-equator {
+    border-color: #f5b7a3; /* Soft Coral */
+}
+
+/* B. Animate the Globe */
+.story-card:hover .globe-icon {
+    /* Rotates slightly (Earth tilt) and scales up */
+    transform: rotate(15deg) scale(1.1); 
+    background-color: rgba(255, 255, 255, 0.5); /* Slight highlight */
+    box-shadow: 0 5px 15px rgba(245, 183, 163, 0.3); /* Soft glow */
 }
