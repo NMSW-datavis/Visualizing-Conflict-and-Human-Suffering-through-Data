@@ -12,38 +12,58 @@
 <body>
 
     <header class="site-header">
-    <h1>Conflict Maps</h1>
-    <p>Visualizing the geographic distribution of human suffering.</p>
-    <nav>
-        <a href="index.html">Home</a> | 
-        <a href="maps.html">Maps</a>
-    </nav>
-</header>
+        <h1>Conflict Maps</h1>
+        <p class="intro-subtitle">Visualizing the geographic distribution of human suffering through data.</p>
+        <nav>
+            <a href="index.html">Home</a> | 
+            <a href="maps.html" style="font-weight: 600; color: var(--color-primary);">Maps</a>
+        </nav>
+    </header>
 
-    <main style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <main style="max-width: 1100px; margin: 0 auto; padding: 20px;">
 
         <div class="map-section">
-            <h2>1. Intensity by Region (Choropleth)</h2>
-            <p>This map illustrates the intensity of conflict across broader regions. Darker shades of blue indicate a higher accumulation of reported incidents.</p>
+            <h2>1. Regional Impact & Systemic Violence</h2>
+            <p>
+                This choropleth map moves beyond individual events to visualize the <strong>systemic nature of conflict</strong> across borders. 
+                By aggregating data at a regional level, we can observe where instability has become entrenched. 
+                Darker shades of blue indicate regions where the accumulation of reported incidents suggests a prolonged state of crisis, 
+                highlighting areas that require urgent humanitarian attention.
+            </p>
             <div id="map-choropleth" class="map-container"></div>
         </div>
 
         <div class="map-section">
-            <h2>2. Specific Events (Proportional Symbols)</h2>
-            <p>Each circle represents a specific conflict event. The size of the circle is proportional to the human toll (civilian fatalities), highlighting the magnitude of individual tragedies.</p>
+            <h2>2. The Human Toll of Individual Events</h2>
+            <p>
+                While regional maps show trends, this proportional symbol map focuses on the <strong>magnitude of specific tragedies</strong>. 
+                Each circle represents a distinct conflict event. The scale of the circle is directly proportional to the number of civilian fatalities recorded. 
+                This visualization aims to restore weight to the numbers, reminding us that every larger circle represents a significant loss of human life 
+                that may otherwise be lost in the aggregate data.
+            </p>
             <div id="map-symbol" class="map-container"></div>
         </div>
 
         <div class="map-section">
-            <h2>3. Density of Crisis (Heatmap)</h2>
-            <p>An organic representation of conflict concentration. Soft gradients reveal where crises overlap and intensify.</p>
+            <h2>3. Zones of Intensity (Heatmap)</h2>
+            <p>
+                Conflict is rarely static; it flows, clusters, and spreads. This heatmap dissolves political borders to reveal the 
+                <strong>organic density of violence</strong>. Using soft gradients that transition from deep blue to our accent coral, 
+                we visualize "hotspots" where crises overlap. This approach highlights the intensity of human suffering in a way that 
+                boundaries on a standard map cannot, showing clearly where the pressure on civilian populations is highest.
+            </p>
             <div id="map-heat" class="map-container"></div>
+        </div>
+
+        <div style="text-align: center; margin: 4rem 0;">
+            <a href="index.html" class="return-home large">← Return to Homepage</a>
         </div>
 
     </main>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    
     <script src="maps.js"></script>
 </body>
 </html>
