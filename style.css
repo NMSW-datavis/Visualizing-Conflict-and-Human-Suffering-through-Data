@@ -835,3 +835,56 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 4px;
     margin-top: 15px;
 }
+
+/* ---  Map icon --- */
+
+/* Visual container */
+.map-visual {
+    background-color: #f0f4f8; /* Light blue/grey background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Marker container */
+.map-marker-container {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Core dot (Deep Blue) */
+.marker-core {
+    width: 12px;
+    height: 12px;
+    background-color: #003a70; /* Deep Blue */
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Pulsing ring (Soft Coral) */
+.marker-pulse {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #f5b7a3; /* Soft Coral */
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: pulse-ring 2s infinite ease-out;
+}
+
+/* Animation for the "Organic" effect */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(3.5); /* Expands */
+        opacity: 0; /* Fades out */
+    }
+}
