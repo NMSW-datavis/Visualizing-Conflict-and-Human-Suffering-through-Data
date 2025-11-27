@@ -838,18 +838,15 @@ input[type="range"]::-moz-range-thumb {
 
 /* ---  Map icon (UPDATED) --- */
 
-/* =========================================
-   Map Icon Animation (Metamorphosis)
-   ========================================= */
-
-/* 1. Container for the icon */
+/* Visual container */
 .map-visual {
-    background-color: #f0f4f8;
+    background-color: #f0f4f8; /* Light blue/grey background */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+/* Marker container (UPDATED with transition) */
 .map-marker-container {
     position: relative;
     width: 40px;
@@ -857,66 +854,45 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* ADDED: Smooth, bouncy transition for hover effect */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 2. The Core Dot (This transforms into the Pin) */
+/* Core dot (Deep Blue) */
 .marker-core {
-    width: 14px;
-    height: 14px;
-    background-color: #003a70; /* Start: Deep Blue */
-    border-radius: 50%;        /* Start: Perfect Circle */
+    width: 12px;
+    height: 12px;
+    background-color: #003a70; /* Deep Blue */
+    border-radius: 50%;
     position: relative;
     z-index: 2;
-    
-    /* Smooth transition for shape, color, and rotation */
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* 3. The Pulsing Ring (The "Radio wave" effect) */
+/* Pulsing ring (Soft Coral) */
 .marker-pulse {
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     background-color: #f5b7a3; /* Soft Coral */
     border-radius: 50%;
     opacity: 0.6;
-    z-index: 1;
     animation: pulse-ring 2s infinite ease-out;
-    transition: opacity 0.3s ease;
 }
 
-/* --- ANIMATION KEYFRAMES --- */
+/* Animation for the "Organic" effect */
 @keyframes pulse-ring {
     0% {
         transform: scale(1);
         opacity: 0.8;
     }
     100% {
-        transform: scale(3.5); /* Expands outward */
-        opacity: 0;            /* Fades away */
+        transform: scale(3.5); /* Expands */
+        opacity: 0; /* Fades out */
     }
 }
 
-/* --- HOVER EFFECTS ( The Magic Happens Here ) --- */
-
-/* When hovering the Story Card... */
-
-/* A. The Core morphs into a Map Pin */
-.story-card:hover .marker-core {
-    background-color: #f5b7a3;       /* Change to Coral Accent */
-    border-radius: 50% 50% 50% 0;    /* Change shape to Teardrop */
-    transform: rotate(-45deg) scale(1.3); /* Rotate to point down & grow */
-    box-shadow: 0 5px 10px rgba(245, 183, 163, 0.4); /* Add soft glow */
-}
-
-/* B. The Pulse Ring disappears (to keep it clean) */
-.story-card:hover .marker-pulse {
-    opacity: 0;
-    animation: none;
-}
-
-/* C. The Container bounces slightly */
+/* ADDED: Hover effect to scale up the marker when hovering the card */
 .story-card:hover .map-marker-container {
-    transform: translateY(-5px);
-    transition: transform 0.3s ease;
+    transform: scale(1.6);
 }
