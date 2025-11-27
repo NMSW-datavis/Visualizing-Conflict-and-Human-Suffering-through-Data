@@ -836,7 +836,7 @@ input[type="range"]::-moz-range-thumb {
     margin-top: 15px;
 }
 
-/* ---  Map icon --- */
+/* ---  Map icon (UPDATED) --- */
 
 /* Visual container */
 .map-visual {
@@ -846,7 +846,7 @@ input[type="range"]::-moz-range-thumb {
     justify-content: center;
 }
 
-/* Marker container */
+/* Marker container (UPDATED with transition) */
 .map-marker-container {
     position: relative;
     width: 40px;
@@ -854,6 +854,9 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     align-items: center;
     justify-content: center;
+    
+    /* ADDED: Smooth, bouncy transition for hover effect */
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* Core dot (Deep Blue) */
@@ -887,4 +890,9 @@ input[type="range"]::-moz-range-thumb {
         transform: scale(3.5); /* Expands */
         opacity: 0; /* Fades out */
     }
+}
+
+/* ADDED: Hover effect to scale up the marker when hovering the card */
+.story-card:hover .map-marker-container {
+    transform: scale(1.6);
 }
