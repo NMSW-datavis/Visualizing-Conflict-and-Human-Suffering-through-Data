@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geography of Pain: A Spatial Analysis</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css" />
+  
+  <style>
+  
+  </style>
+</head> 
+<body>
+
+  <div class="viz-tooltip" id="tooltip"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <h1>The Geography of Pain</h1>
+      <p class="intro-subtitle">Deconstructing the spatial distribution of conflict.</p>
+      <a href="index.html" class="return-home">← Back to Overview</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section>
+      <div class="byline"><span>Part I: Frequency</span></div>
+      <h3>The Permanence of Instability</h3>
+       <p class="article">
+        <strong>Interaction:</strong> Drag to pan, scroll to zoom. Hover to see the conflict timeline.
+      </p>
+       <p class="article">
+        This map visualizes the <strong>chronicity</strong> of violence. Darker red indicates countries that have reported civilian fatalities in almost every year of the dataset. This is the "background noise" of geopolitical instability.
+      </p>
+    </section>
+
+    <div class="chart-wrapper">
+      <div class="map-container" id="choropleth-map"></div>
+    </div>
+
+    <section>
+        <div class="byline"><span>Part II: Magnitude</span></div>
+      <h3>Epicenters of Violence</h3>
+       <p class="article">
+        Here, we visualize intensity. The bubbles are colored by region and use a <strong>multiply blend mode</strong>. Where bubbles overlap, the colors darken, highlighting areas (like the Middle East) where multiple crises converge.
+      </p>
+    </section>
+
+<datalist id="country-list"></datalist>
+
+<div class="chart-wrapper">
+  <div class="map-header">
+    <div class="search-container">
+        <input type="text" class="map-search" id="search-choropleth" list="country-list" placeholder="Find a country...">
+        <button class="btn-search-trigger">🔍</button>
+    </div>
+    <div class="zoom-controls">
+        <button class="btn-zoom" id="zoom-in-choro">+</button>
+        <button class="btn-zoom" id="zoom-out-choro">−</button>
+        <button class="btn-zoom" id="zoom-reset-choro">↺</button>
+    </div>
+  </div>
+  <div class="map-container" id="choropleth-map"></div>
+</div>
+
+<div class="chart-wrapper">
+  <div class="map-header">
+    <div class="search-container">
+        <input type="text" class="map-search" id="search-symbol" list="country-list" placeholder="Find a country...">
+        <button class="btn-search-trigger">🔍</button>
+    </div>
+    <div class="chart-controls inline">
+        <label><input type="radio" name="propMode" value="total" checked> Total</label>
+        <label><input type="radio" name="propMode" value="peak"> Peak</label>
+    </div>
+    <div class="zoom-controls">
+        <button class="btn-zoom" id="zoom-in-symbol">+</button>
+        <button class="btn-zoom" id="zoom-out-symbol">−</button>
+        <button class="btn-zoom" id="zoom-reset-symbol">↺</button>
+    </div>
+  </div>
+  <div class="map-container" id="symbol-map"></div>
+</div>
+
+<div class="chart-wrapper">
+  <div class="map-header">
+    <div class="search-container">
+        <input type="text" class="map-search" id="search-carto" list="country-list" placeholder="Find a country...">
+        <button class="btn-search-trigger">🔍</button>
+    </div>
+    <div class="zoom-controls">
+        <button class="btn-zoom" id="zoom-in-carto">+</button>
+        <button class="btn-zoom" id="zoom-out-carto">−</button>
+        <button class="btn-zoom" id="zoom-reset-carto">↺</button>
+    </div>
+  </div>
+  <div class="map-container" id="cartogram-map" style="height: 800px;"></div>
+</div>
+    <section>
+        <div class="byline"><span>Part III: Distortion</span></div>
+      <h3>The Broken Map</h3>
+       <p class="article">
+        Standard maps lie by prioritizing land area. In this <strong>Non-Contiguous Cartogram</strong>, we retain the shape of each country but scale it according to its total civilian fatalities. 
+      </p>
+       <p class="article">
+        The result is a "world of broken pieces." Massive, peaceful nations like Canada shrink to islands, while conflict-ridden nations expand. The geography itself is reorganized by the gravity of suffering.
+      </p>
+    </section>
+
+    <div class="chart-wrapper">
+      <div class="map-container" id="cartogram-map" style="height: 800px;"></div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--color-secondary); margin-top:1rem;">
+        <em>Note: Countries are scaled by fatalities and loosely grouped by continent.</em>
+      </p>
+    </div>
+
+    <div style="text-align:center; margin-bottom: 4rem;">
+       <a href="index.html" class="return-home large">← Return To Home </a>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+       <a href="https://id.unige.it/" class="footer-logo">
+        <img src="./logo-colore.png" alt="unige logo" />
+      </a>
+      <p>Università di Genova – Data Visualization Course </p>
+    </div>
+  </footer>
+
+  <script src="maps.js"></script>
+</body>
+</html>
