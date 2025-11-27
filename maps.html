@@ -4,55 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global Conflict Maps</title>
+    
     <link rel="stylesheet" href="style.css">
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;600&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
 
+    <div id="tooltip" style="position: fixed; opacity: 0; background: rgba(15, 23, 42, 0.95); color: #fff; padding: 10px 14px; border-radius: 6px; pointer-events: none; z-index: 9999; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);"></div>
+
     <header class="site-header">
-        <h1>Conflict Maps</h1>
-        <p class="intro-subtitle">Visualizing the geographic distribution of human suffering through data.</p>
-        <nav>
-            <a href="index.html">Home</a> | 
-            <a href="maps.html" style="font-weight: 600; color: var(--color-primary);">Maps</a>
-        </nav>
+        <div class="container">
+            <h1>Conflict Maps</h1>
+            <p class="intro-subtitle">Visualizing the geographic distribution of human suffering through data.</p>
+            <nav>
+                <a href="index.html">Home</a> | 
+                <a href="maps.html" style="font-weight: 600; color: var(--color-primary);">Maps</a>
+            </nav>
+        </div>
     </header>
 
     <main style="max-width: 1100px; margin: 0 auto; padding: 20px;">
 
         <div class="map-section">
-            <h2>1. Regional Impact & Systemic Violence</h2>
-            <p>
-                This choropleth map moves beyond individual events to visualize the <strong>systemic nature of conflict</strong> across borders. 
-                By aggregating data at a regional level, we can observe where instability has become entrenched. 
-                Darker shades of blue indicate regions where the accumulation of reported incidents suggests a prolonged state of crisis, 
-                highlighting areas that require urgent humanitarian attention.
+            <h2>1. Regional Impact (Choropleth Map)</h2>
+            <p class="article">
+                This map moves beyond individual events to visualize the <strong>systemic nature of conflict</strong> across borders. 
+                Using a logarithmic color scale, darker shades of red indicate countries where the accumulation of reported fatalities suggests a prolonged state of crisis.
             </p>
-            <div id="map-choropleth" class="map-container"></div>
+            <div id="choropleth-map" class="map-container" style="height: 600px; width: 100%; border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden;"></div>
         </div>
 
-        <div class="map-section">
-            <h2>2. The Human Toll of Individual Events</h2>
-            <p>
-                While regional maps show trends, this proportional symbol map focuses on the <strong>magnitude of specific tragedies</strong>. 
-                Each circle represents a distinct conflict event. The scale of the circle is directly proportional to the number of civilian fatalities recorded. 
-                This visualization aims to restore weight to the numbers, reminding us that every larger circle represents a significant loss of human life 
-                that may otherwise be lost in the aggregate data.
-            </p>
-            <div id="map-symbol" class="map-container"></div>
-        </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 3rem 0;">
 
         <div class="map-section">
-            <h2>3. Zones of Intensity (Heatmap)</h2>
-            <p>
-                Conflict is rarely static; it flows, clusters, and spreads. This heatmap dissolves political borders to reveal the 
-                <strong>organic density of violence</strong>. Using soft gradients that transition from deep blue to our accent coral, 
-                we visualize "hotspots" where crises overlap. This approach highlights the intensity of human suffering in a way that 
-                boundaries on a standard map cannot, showing clearly where the pressure on civilian populations is highest.
+            <h2>2. The Human Toll (Proportional Symbol Map)</h2>
+            <p class="article">
+                While regional maps show trends, this map focuses on <strong>magnitude</strong>. 
+                Each circle represents a country's total reported civilian fatalities. The size (area) of the circle is mathematically proportional to the number of lives lost, restoring weight to the numbers often lost in aggregate data.
             </p>
-            <div id="map-heat" class="map-container"></div>
+            <div id="symbol-map" class="map-container" style="height: 600px; width: 100%; border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden;"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 3rem 0;">
+
+        <div class="map-section">
+            <h2>3. Zones of Intensity (Contour Density Map)</h2>
+            <p class="article">
+                Conflict is rarely static; it flows and clusters irrespective of borders. This <strong>Contour Map</strong> visualizes the <strong>density</strong> of violence.
+                Using a "Magma" color scale on a dark background, the glowing rings reveal organic "hotspots" of conflict intensity (like in the Sahel or Levant), showing patterns that political boundaries might hide.
+            </p>
+            <div id="cartogram-map" class="map-container" style="height: 700px; width: 100%; background: #2c3e50; border-radius: 12px; overflow: hidden;"></div>
+            <p style="text-align:center; font-size:0.85rem; color:var(--color-secondary); margin-top:1rem;">
+                <em>Note: Visualizing the geographic density of reported fatalities.</em>
+            </p>
         </div>
 
         <div style="text-align: center; margin: 4rem 0;">
@@ -61,8 +70,12 @@
 
     </main>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <p>Università di Genova – Data Visualization Course</p>
+        </div>
+    </footer>
+
     <script src="maps.js"></script>
 </body>
 </html>
