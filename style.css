@@ -90,6 +90,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-heading);
   color: var(--color-primary);
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 h1 { font-size: 3.3rem; font-weight: 700; margin-top: 0.25rem; }
@@ -397,7 +398,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--color-primary);
   font-size: 1.3rem;
   max-width: 50ch;
-  margin: -1.5rem auto 2.5rem;
+  margin: 1.5rem auto 2.5rem;
   position: relative;
   opacity: 0.95;
 }
@@ -853,9 +854,31 @@ input[type="range"]::-moz-range-thumb {
     border-radius: 12px;
     overflow: hidden; /* Clips any edges */
     margin-bottom: 2rem;
-    /* REMOVED cursor: grab */
+   background: #f0f4f8; /* Soft blue-grey "ocean" instead of stark white */
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Inner shadow for depth */
+}
+path {
+  transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+  cursor: pointer; /* Tells user "this is clickable" */
+}
+path:hover {
+  stroke: #333 !important;
+  stroke-width: 1.5px !important;
+  filter: brightness(0.95); /* Slight dim to highlight */
+  z-index: 10; /* Bring to front (requires re-appending in D3, handled below) */
 }
 
+/* 3. Scroll Animation State */
+.map-container svg {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.map-container.visible svg {
+  opacity: 1;
+  transform: translateY(0);
+}
 /* ROBUST TOOLTIP STYLE */
 .viz-tooltip {
     position: fixed; /* Critical for reliable positioning */
@@ -965,10 +988,8 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Legend Styling */
-.map-legend {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
+.map-legend-1 {
+  
     background: rgba(255, 255, 255, 0.92);
     padding: 12px 15px;
     border-radius: 8px;
@@ -977,8 +998,27 @@ input[type="range"]::-moz-range-thumb {
     font-family: var(--font-body);
     font-size: 0.8rem;
     pointer-events: none;
-    max-width: 200px;
-}
+    display: flex;
+        justify-content: center;
+    gap: 25px;
+  
+} 
+.map-legend {
+  
+    background: rgba(255, 255, 255, 0.92);
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    pointer-events: none;
+    max-width: 400px;
+    display: flex;
+    gap: 15px;
+    justify-items: center;
+    align-items: center;
+} 
 
 .legend-title {
     font-weight: 700;
@@ -1026,6 +1066,7 @@ input[type="range"]::-moz-range-thumb {
     width: 100%;
     text-align: right;
     padding-right: 2px;
+}
 /* --- Map dimensions --- */
 .map-section {
     margin: 40px 0;
@@ -1103,4 +1144,104 @@ input[type="range"]::-moz-range-thumb {
     transform: rotate(15deg) scale(1.1); 
     background-color: rgba(255, 255, 255, 0.5); /* Slight highlight */
     box-shadow: 0 5px 15px rgba(245, 183, 163, 0.3); /* Soft glow */
+}
+ .drop-cap::first-letter {
+      font-family: var(--font-heading);
+      font-size: 3.5rem;
+      color: var(--color-primary);
+      float: left;
+      line-height: 0.8;
+      padding-right: 8px;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .dateline {
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      color: var(--color-secondary);
+      margin-right: 6px;
+    }
+
+    /* Viz Specifics */
+    .map-container {
+      /* Override default height if needed, otherwise inherits 500px from style.css */
+      height: 600px; 
+      background: #eef2f6; /* Subtle backing for maps */
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 2rem 0;
+    }
+
+    /* Legend Extras */
+    .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    
+    /* Arrows for Momentum Map */
+   .arrow-up {
+  width: 0; height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 10px solid #e74c3c;
+  margin-right: 8px;
+}
+.arrow-down {
+  width: 0; height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid #3498db;
+  margin-right: 8px;
+}
+    /* Gradient Bar for Density Map */
+    .gradient-bar {
+    width: 140px; 
+  height: 12px;
+  /* Matches d3.interpolateYlOrRd */
+  background: linear-gradient(to right, #ffffcc, #ffeda0, #fed976, #feb24c, #fd8d3c, #fc4e2a, #e31a1c, #bd0026, #800026);
+  border-radius: 2px; 
+  border: 1px solid rgba(0,0,0,0.1);
+}
+    
+
+    /* Caption Styling */
+    .viz-caption {
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 3rem;
+  
+    }
+    .viz-title {
+      font-family: var(--font-heading);
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--color-text); text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* Add to style.css */
+.reset-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.reset-btn.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.reset-btn:hover {
+  background: #f9f9f9;
+  color: var(--color-primary);
 }

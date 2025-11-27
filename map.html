@@ -3,125 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Geography of Pain: A Spatial Analysis</title>
+  <title>The Shape of Conflict: A Data Story</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;700&family=Roboto+Slab:wght@300;400;700&display=swap" rel="stylesheet">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  
   <link rel="stylesheet" href="style.css" />
   
-  <style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
   
-  </style>
-</head> 
-<body>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
 
+<body>
   <div class="viz-tooltip" id="tooltip"></div>
 
   <header class="site-header">
     <div class="container">
-      <h1>The Geography of Pain</h1>
-      <p class="intro-subtitle">Deconstructing the spatial distribution of conflict.</p>
-      <a href="index.html" class="return-home">← Back to Overview</a>
+      <h1>The Shape of Conflict</h1>
+      <p class="intro-subtitle">A data-driven investigation into how global instability is concentrating, shifting, and intensifying in 2024.</p>
+      <a href="index.html" class="return-home">← Back to Home</a>
     </div>
   </header>
 
   <main class="container">
 
     <section>
-      <div class="byline"><span>Part I: Frequency</span></div>
-      <h3>The Permanence of Instability</h3>
-       <p class="article">
-        <strong>Interaction:</strong> Drag to pan, scroll to zoom. Hover to see the conflict timeline.
+      <blockquote class="about-quote">
+        “To understand the true cost of instability, we must look beyond the borders and look at the trend lines.”
+      </blockquote>
+
+      <p class="article drop-cap">
+        The world is not evenly at peace or at war. Conflict lives on a spectrum. While headlines focus on specific flashpoints, the underlying data reveals a complex architecture of risk. 
       </p>
-       <p class="article">
-        This map visualizes the <strong>chronicity</strong> of violence. Darker red indicates countries that have reported civilian fatalities in almost every year of the dataset. This is the "background noise" of geopolitical instability.
+      
+      <p class="article">
+        By analyzing civilian fatality reports from 2024 and comparing them against a five-year baseline, we can deconstruct global violence into three distinct dimensions: <strong>Intensity</strong>, <strong>Momentum</strong>, and <strong>Concentration</strong>.
       </p>
+
+    
+      <p class="article">
+        Our first view captures the absolute magnitude of loss. The map below highlights countries based on total reported civilian fatalities in 2024. Darker shades of red indicate the severe hotspots—Ukraine, Sudan, Gaza, and Myanmar—where the human toll has been highest.
+      </p>
+
+      <div id="choropleth-map" class="map-container"></div>
+      
+      <div class="viz-caption">
+        
+          <div class="map-legend-1">
+  <div class="legend-item"><span class="dot" style="background:#67000d"></span> High (>5,000)</div>
+  <div class="legend-item"><span class="dot" style="background:#ef3b2c"></span> Moderate</div>
+  <div class="legend-item"><span class="dot" style="background:#fee0d2"></span> Low</div>
+  <div class="legend-item"><span class="dot" style="background:#e0e0e0; border:1px solid #ccc"></span> None Reported</div>
+</div>
+         
+       
+      </div>
+
+      
+      <p class="article">
+        However, a static map can be misleading. A country with high fatalities might be stabilizing, while a peaceful nation might be on the brink of collapse. To understand <strong>risk</strong>, we must look at momentum.
+      </p>
+
+      <p class="article">
+        The map below compares 2024 levels against the 5-year average. <strong style="color:#e74c3c">Red arrows</strong> indicate a surge in violence—a warning sign of deterioration. <strong style="color:#3498db">Blue arrows</strong> indicate a reduction. Note how some "High Intensity" zones are actually seeing a decrease, while new fronts are opening elsewhere.
+      </p>
+
+      <div id="symbol-map" class="map-container"></div>
+      
+      <div class="viz-caption">
+        <div class="map-legend-1">
+          <div class="legend-item"><div class="arrow-up"></div> Violence Increasing</div>
+          <div class="legend-item"><div class="arrow-down"></div> Violence Decreasing</div>
+        </div>
+        
+      </div>
+
+     
+      <p class="article">
+        Finally, we must recognize that violence rarely respects political treaties. It spills across frontiers, fueled by porous borders, shared insurgencies, and regional geopolitics. 
+      </p>
+
+      <p class="article">
+        By removing national boundaries and visualizing the data as a density field, we see the true "epicenters" of global suffering. Individual conflicts in the Sahel, the Levant, and Eastern Europe merge into massive, interconnected zones of instability.
+      </p>
+
+      <div id="density-map" class="map-container"></div>
+      
+      <div class="viz-caption">
+        <div class="map-legend">
+          <div class="legend-item">Low Density</div>
+          <div class="gradient-bar"></div>
+          <div class="legend-item">Extreme Concentration</div>
+        </div>
+        
+      </div>
+
+      <p class="article">
+        These maps remind us that "hot spots" are not isolated islands. They are part of a shifting, breathing ecosystem of instability that requires regional, not just national, attention.
+      </p>
+ <blockquote class="about-quote">
+        “Maps draw lines where land divides, but suffering knows no borders.”
+      </blockquote>
     </section>
 
-    <div class="chart-wrapper">
-      <div class="map-container" id="choropleth-map"></div>
-    </div>
-
-    <section>
-        <div class="byline"><span>Part II: Magnitude</span></div>
-      <h3>Epicenters of Violence</h3>
-       <p class="article">
-        Here, we visualize intensity. The bubbles are colored by region and use a <strong>multiply blend mode</strong>. Where bubbles overlap, the colors darken, highlighting areas (like the Middle East) where multiple crises converge.
-      </p>
-    </section>
-
-<datalist id="country-list"></datalist>
-
-<div class="chart-wrapper">
-  <div class="map-header">
-    <div class="search-container">
-        <input type="text" class="map-search" id="search-choropleth" list="country-list" placeholder="Find a country...">
-        <button class="btn-search-trigger">🔍</button>
-    </div>
-    <div class="zoom-controls">
-        <button class="btn-zoom" id="zoom-in-choro">+</button>
-        <button class="btn-zoom" id="zoom-out-choro">−</button>
-        <button class="btn-zoom" id="zoom-reset-choro">↺</button>
-    </div>
-  </div>
-  <div class="map-container" id="choropleth-map"></div>
-</div>
-
-<div class="chart-wrapper">
-  <div class="map-header">
-    <div class="search-container">
-        <input type="text" class="map-search" id="search-symbol" list="country-list" placeholder="Find a country...">
-        <button class="btn-search-trigger">🔍</button>
-    </div>
-    <div class="chart-controls inline">
-        <label><input type="radio" name="propMode" value="total" checked> Total</label>
-        <label><input type="radio" name="propMode" value="peak"> Peak</label>
-    </div>
-    <div class="zoom-controls">
-        <button class="btn-zoom" id="zoom-in-symbol">+</button>
-        <button class="btn-zoom" id="zoom-out-symbol">−</button>
-        <button class="btn-zoom" id="zoom-reset-symbol">↺</button>
-    </div>
-  </div>
-  <div class="map-container" id="symbol-map"></div>
-</div>
-
-<div class="chart-wrapper">
-  <div class="map-header">
-    <div class="search-container">
-        <input type="text" class="map-search" id="search-carto" list="country-list" placeholder="Find a country...">
-        <button class="btn-search-trigger">🔍</button>
-    </div>
-    <div class="zoom-controls">
-        <button class="btn-zoom" id="zoom-in-carto">+</button>
-        <button class="btn-zoom" id="zoom-out-carto">−</button>
-        <button class="btn-zoom" id="zoom-reset-carto">↺</button>
-    </div>
-  </div>
-  <div class="map-container" id="cartogram-map" style="height: 800px;"></div>
-</div>
-    <section>
-        <div class="byline"><span>Part III: Distortion</span></div>
-      <h3>The Broken Map</h3>
-       <p class="article">
-        Standard maps lie by prioritizing land area. In this <strong>Non-Contiguous Cartogram</strong>, we retain the shape of each country but scale it according to its total civilian fatalities. 
-      </p>
-       <p class="article">
-        The result is a "world of broken pieces." Massive, peaceful nations like Canada shrink to islands, while conflict-ridden nations expand. The geography itself is reorganized by the gravity of suffering.
-      </p>
-    </section>
-
-    <div class="chart-wrapper">
-      <div class="map-container" id="cartogram-map" style="height: 800px;"></div>
-      <p style="text-align:center; font-size:0.85rem; color:var(--color-secondary); margin-top:1rem;">
-        <em>Note: Countries are scaled by fatalities and loosely grouped by continent.</em>
-      </p>
-    </div>
-
-    <div style="text-align:center; margin-bottom: 4rem;">
+    <div style="text-align:center; margin-bottom: 4rem; margin-top: 3rem;">
        <a href="index.html" class="return-home large">← Return To Home </a>
     </div>
 
@@ -129,13 +114,13 @@
 
   <footer class="site-footer">
     <div class="container footer-content">
-       <a href="https://id.unige.it/" class="footer-logo">
+      <div class="footer-logo">
         <img src="./logo-colore.png" alt="unige logo" />
-      </a>
-      <p>Università di Genova – Data Visualization Course </p>
+      </div>
+      <p>Università di Genova – Data Visualization Course • For educational purposes only</p>
     </div>
   </footer>
 
-  <script src="maps.js"></script>
+ <script src="maps.js"></script>
 </body>
 </html>
