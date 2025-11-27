@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Conflict Maps</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;600&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>Conflict Maps</h1>
+        <p>Visualizing the geographic distribution of human suffering.</p>
+        <nav>
+            <a href="index.html">Home</a> | 
+            <a href="maps.html">Maps</a>
+        </nav>
+    </header>
+
+    <main style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+
+        <div class="map-section">
+            <h2>1. Intensity by Region (Choropleth)</h2>
+            <p>This map illustrates the intensity of conflict across broader regions. Darker shades of blue indicate a higher accumulation of reported incidents.</p>
+            <div id="map-choropleth" class="map-container"></div>
+        </div>
+
+        <div class="map-section">
+            <h2>2. Specific Events (Proportional Symbols)</h2>
+            <p>Each circle represents a specific conflict event. The size of the circle is proportional to the human toll (civilian fatalities), highlighting the magnitude of individual tragedies.</p>
+            <div id="map-symbol" class="map-container"></div>
+        </div>
+
+        <div class="map-section">
+            <h2>3. Density of Crisis (Heatmap)</h2>
+            <p>An organic representation of conflict concentration. Soft gradients reveal where crises overlap and intensify.</p>
+            <div id="map-heat" class="map-container"></div>
+        </div>
+
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    
+    <script src="maps.js"></script>
+</body>
+</html>

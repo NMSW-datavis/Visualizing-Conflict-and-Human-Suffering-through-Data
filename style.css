@@ -819,3 +819,19 @@ input[type="range"]::-moz-range-thumb {
       margin-top: 10px;
     }
   }
+
+/* --- Map dimensions --- */
+.map-section {
+    margin: 40px 0;
+    padding: 20px;
+    background-color: #fff; 
+    border-radius: 8px;
+}
+
+.map-container {
+    height: 500px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 15px;
+}
