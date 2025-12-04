@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Architecture of Instability</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .view-selector {
+      display: flex;
+      gap: 15px;
+      font-size: 0.9rem;
+      font-family: var(--font-body);
+    }
+    .view-link {
+      cursor: pointer;
+      color: var(--color-secondary);
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      transition: 0.2s;
+    }
+    .view-link:hover { color: var(--color-primary); }
+    .view-link.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viz-tooltip" id="viz-tooltip"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <h1>The Architecture of Instability</h1>
+      <p class="intro-subtitle">
+        How patterns of violence reveal the hidden geometry of political disorder.
+      </p>
+      <a href="index.html" class="return-home">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Opening Section -->
+    <section>
+      <blockquote class="about-quote">
+        “Instability is rarely random. Its structure, once mapped, is disquietingly consistent.”
+      </blockquote>
+
+      <p class="drop-cap article">
+        In the study of modern conflict, geography still dominates the imagination. Wars are defined by their coordinates: Gaza, Donbas, Rakhine, Michoacán. Yet when violence is examined not by <em>where</em> it happens but by <em>how</em> it behaves, a different landscape appears—one shaped not by borders but by structure.
+      </p>
+
+      <p class="article">
+        The network below maps this alternative world. Countries are pulled toward one another not by distance but by mathematical similarity: the number of armed groups, the volatility of fighting, and the degree to which civilians are targeted. These structural traits form distinct signatures, binding unlikely nations together.
+      </p>
+    </section>
+
+    <!-- Network Graph -->
+    <div class="container" style="max-width: 900px; margin: 2rem auto;">
+      <div class="chart-card">
+        <div class="viz-header">
+          <div>
+            <h3 style="margin:0; color:var(--color-primary);">Figure 1 — The Structural Web</h3>
+            <span class="small muted">Nodes sized by conflict intensity.</span>
+          </div>
+          <div class="view-selector">
+            <span class="view-link active" data-view="global">Global View</span>
+            <span class="view-link" data-view="clusters">Regional Blocks</span>
+            <span class="view-link" data-view="anomaly">The Anomaly</span>
+          </div>
+        </div>
+
+        <div id="network-chart"
+             style="height: 600px; background:#fafafa; border:none;">
+        </div>
+
+        <div class="legend" style="justify-content:center; margin-top:10px; padding-top:10px; border-top:1px solid #eee;">
+          <span class="legend-item"><span class="dot" style="background:#e67e22"></span>Africa</span>
+          <span class="legend-item"><span class="dot" style="background:#8e44ad"></span>Middle East</span>
+          <span class="legend-item"><span class="dot" style="background:#2980b9"></span>Asia</span>
+          <span class="legend-item"><span class="dot" style="background:#c0392b"></span>Americas</span>
+          <span class="legend-item"><span class="dot" style="background:#27ae60"></span>Europe</span>
+
+          <div style="margin-left:auto;">
+            <input type="text" id="network-search"
+                   placeholder="Locate country..."
+             style="padding:4px 8px; border:1px solid #ccc; border-radius:4px; font-size:0.8rem;">
+          </div>
+        </div>
+
+      </div>
+
+      <p class="small muted" style="text-align:center; margin-top:0.5rem;">
+        <em>Interactive: drag nodes to reposition; use the tabs to reveal structural patterns.</em>
+      </p>
+    </div>
+
+    <!-- Anomaly Explanation -->
+    <section>
+      <p class="article">
+        Most countries cluster along familiar regional lines. Yet one pairing stands out. In the <em>Anomaly</em> view, <strong>Mexico</strong> and <strong>Nigeria</strong> emerge as structural twins: each beset by a dense constellation of competing non-state actors, each experiencing unpredictable spikes of civilian harm, and each locked in a prolonged struggle for territorial control. Geography separates them; their instability framework does not.
+      </p>
+    </section>
+
+    <div style="margin: 4rem 0; border-top:1px solid var(--border);"></div>
+
+    <!-- Sankey Section -->
+    <section>
+      <h3 class="viz-title" style="text-align:center;">The Human Cost</h3>
+
+      <p class="article">
+        Structural patterns tell us <em>how</em> conflicts behave. The Sankey diagram below shows what they <em>produce</em>. Fatalities flow from regional origins into the forms of violence that claim lives: battles, insurgencies, non-state clashes, and, most grimly, <strong style="color:#e74c3c">One-Sided Violence</strong>.
+      </p>
+
+      <p class="article">
+        These are deaths in which civilians are killed without resistance—executions, massacres, and targeted killings. In several regions, this “shadow war” exceeds the casualties of open battle.
+      </p>
+    </section>
+
+    <div class="container" style="max-width:900px; margin:2rem auto;">
+      <div class="chart-card">
+        <div class="viz-header">
+          <h3 style="margin:0; color:var(--color-primary);">Figure 2 — The Pipeline of Loss</h3>
+          <button id="sankey-reset" class="btn-reset small" style="display:none; padding:2px 8px; font-size:0.75rem;">Reset Filter</button>
+        </div>
+
+        <div id="sankey-chart" style="height:500px;"></div>
+        <div id="sankey-status" class="small"
+             style="text-align:center; margin-top:10px; min-height:1.5em; font-weight:600; color:var(--color-secondary);">
+          Hover over any stream to view fatality statistics.
+        </div>
+      </div>
+    </div>
+
+    <section>
+      <p class="article">
+        Conflict, viewed structurally, is less chaotic than it appears. It moves in predictable patterns, even as its human toll remains immeasurable. Behind each line, node, and flow are lives reshaped or lost.
+      </p>
+    </section>
+
+    <div style="text-align:center; margin:5rem 0 3rem;">
+       <a href="index.html" class="return-home large">← Return To Home</a>
+    </div>
+
+  </main>
+
+  <script src="test.js"></script>
+</body>
+</html>

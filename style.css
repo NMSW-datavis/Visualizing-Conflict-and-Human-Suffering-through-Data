@@ -1245,3 +1245,72 @@ path:hover {
   background: #f9f9f9;
   color: var(--color-primary);
 }
+
+/* =========================================
+   New Menu Visual: Architecture (Network)
+   ========================================= */
+
+.structure-visual {
+  position: relative;
+  width: 80px; height: 60px;
+  display: flex; justify-content: center; align-items: center;
+  /* Matches existing .time-visual background */
+  background: linear-gradient(160deg, rgba(0,58,112,0.02), rgba(245,183,163,0.03));
+  border-radius: 8px;
+}
+
+.net-icon {
+  position: relative;
+  width: 40px; height: 40px;
+  transition: transform 0.3s ease;
+}
+
+/* --- The Nodes (Circles) --- */
+.net-circle {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--color-primary); /* Default: Blue (like clock hands) */
+  transition: background-color 0.3s ease, transform 0.3s cubic-bezier(0.4, 2.5, 0.55, 0.44);
+  z-index: 2;
+}
+
+.circle-main  { width: 12px; height: 12px; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.circle-top   { width: 8px;  height: 8px;  top: 0;   left: 50%; transform: translateX(-50%); }
+.circle-right { width: 7px;  height: 7px;  bottom: 10%; right: 0; }
+.circle-left  { width: 7px;  height: 7px;  bottom: 10%; left: 0; }
+
+/* --- The Links (Lines) --- */
+.net-line {
+  position: absolute;
+  background-color: var(--color-accent); /* Default: Coral (like clock rim) */
+  height: 2px;
+  transform-origin: top left;
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* Connecting center to outer nodes */
+.line-1 { width: 18px; top: 12px; left: 20px; transform: rotate(-90deg); } /* To Top */
+.line-2 { width: 18px; top: 20px; left: 20px; transform: rotate(40deg); }  /* To Right */
+.line-3 { width: 18px; top: 20px; left: 20px; transform: rotate(140deg); } /* To Left */
+
+/* --- Hover Effects (Matching the Clock Logic) --- */
+
+/* 1. Scale Up Icon */
+.story-card:hover .net-icon {
+  transform: scale(1.1);
+}
+
+/* 2. Color Swap (Nodes become Coral, Lines become Blue) */
+.story-card:hover .net-circle {
+  background-color: var(--color-accent);
+}
+
+.story-card:hover .net-line {
+  background-color: var(--color-primary);
+}
+
+/* 3. Subtle "Expansion" Animation on Hover */
+.story-card:hover .circle-top   { top: -4px; }
+.story-card:hover .circle-right { right: -4px; bottom: 6px; }
+.story-card:hover .circle-left  { left: -4px; bottom: 6px; }

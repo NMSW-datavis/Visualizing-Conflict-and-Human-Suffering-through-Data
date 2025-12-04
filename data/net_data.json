@@ -1,0 +1,706 @@
+{
+  "network": {
+    "nodes": [
+      {
+        "id": "Palestine",
+        "size": 35137,
+        "level": "Extreme"
+      },
+      {
+        "id": "Myanmar",
+        "size": 19847,
+        "level": "Extreme"
+      },
+      {
+        "id": "Syria",
+        "size": 5849,
+        "level": "Extreme"
+      },
+      {
+        "id": "Mexico",
+        "size": 8110,
+        "level": "Extreme"
+      },
+      {
+        "id": "Nigeria",
+        "size": 9355,
+        "level": "Extreme"
+      },
+      {
+        "id": "Brazil",
+        "size": 7163,
+        "level": "Extreme"
+      },
+      {
+        "id": "Lebanon",
+        "size": 3827,
+        "level": "Extreme"
+      },
+      {
+        "id": "Sudan",
+        "size": 13833,
+        "level": "Extreme"
+      },
+      {
+        "id": "Cameroon",
+        "size": 2225,
+        "level": "Extreme"
+      },
+      {
+        "id": "Colombia",
+        "size": 1693,
+        "level": "Extreme"
+      },
+      {
+        "id": "Haiti",
+        "size": 1870,
+        "level": "High"
+      },
+      {
+        "id": "Pakistan",
+        "size": 2883,
+        "level": "High"
+      },
+      {
+        "id": "Democratic Republic of Congo",
+        "size": 3943,
+        "level": "High"
+      },
+      {
+        "id": "Ukraine",
+        "size": 67606,
+        "level": "High"
+      },
+      {
+        "id": "India",
+        "size": 1183,
+        "level": "High"
+      },
+      {
+        "id": "Yemen",
+        "size": 1672,
+        "level": "High"
+      },
+      {
+        "id": "Iraq",
+        "size": 979,
+        "level": "High"
+      },
+      {
+        "id": "Bangladesh",
+        "size": 524,
+        "level": "High"
+      },
+      {
+        "id": "Russia",
+        "size": 4366,
+        "level": "High"
+      },
+      {
+        "id": "Ethiopia",
+        "size": 9839,
+        "level": "High"
+      },
+      {
+        "id": "Somalia",
+        "size": 5590,
+        "level": "High"
+      },
+      {
+        "id": "Mali",
+        "size": 4154,
+        "level": "High"
+      },
+      {
+        "id": "Kenya",
+        "size": 724,
+        "level": "High"
+      },
+      {
+        "id": "Jamaica",
+        "size": 331,
+        "level": "High"
+      },
+      {
+        "id": "South Sudan",
+        "size": 2028,
+        "level": "High"
+      },
+      {
+        "id": "Honduras",
+        "size": 492,
+        "level": "High"
+      },
+      {
+        "id": "Venezuela",
+        "size": 525,
+        "level": "High"
+      },
+      {
+        "id": "Burkina Faso",
+        "size": 7958,
+        "level": "High"
+      },
+      {
+        "id": "Afghanistan",
+        "size": 1174,
+        "level": "High"
+      },
+      {
+        "id": "Philippines",
+        "size": 712,
+        "level": "High"
+      },
+      {
+        "id": "Trinidad and Tobago",
+        "size": 324,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Israel",
+        "size": 99,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Burundi",
+        "size": 191,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Puerto Rico",
+        "size": 190,
+        "level": "Turbulent"
+      },
+      {
+        "id": "South Africa",
+        "size": 294,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Guatemala",
+        "size": 290,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Niger",
+        "size": 1774,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Central African Republic",
+        "size": 701,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Libya",
+        "size": 135,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Mozambique",
+        "size": 486,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Indonesia",
+        "size": 135,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Ecuador",
+        "size": 77,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Peru",
+        "size": 51,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Turkey",
+        "size": 62,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Uganda",
+        "size": 251,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Benin",
+        "size": 233,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Madagascar",
+        "size": 498,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Ghana",
+        "size": 141,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Iran",
+        "size": 354,
+        "level": "Turbulent"
+      },
+      {
+        "id": "Chad",
+        "size": 461,
+        "level": "Turbulent"
+      }
+    ],
+    "links": [
+      {
+        "source": "Palestine",
+        "target": "Lebanon"
+      },
+      {
+        "source": "Palestine",
+        "target": "Trinidad and Tobago"
+      },
+      {
+        "source": "Myanmar",
+        "target": "Syria"
+      },
+      {
+        "source": "Myanmar",
+        "target": "Mexico"
+      },
+      {
+        "source": "Syria",
+        "target": "Puerto Rico"
+      },
+      {
+        "source": "Syria",
+        "target": "Haiti"
+      },
+      {
+        "source": "Mexico",
+        "target": "Brazil"
+      },
+      {
+        "source": "Mexico",
+        "target": "Nigeria"
+      },
+      {
+        "source": "Nigeria",
+        "target": "Brazil"
+      },
+      {
+        "source": "Nigeria",
+        "target": "Ethiopia"
+      },
+      {
+        "source": "Lebanon",
+        "target": "Trinidad and Tobago"
+      },
+      {
+        "source": "Lebanon",
+        "target": "Israel"
+      },
+      {
+        "source": "Sudan",
+        "target": "Ethiopia"
+      },
+      {
+        "source": "Sudan",
+        "target": "Nigeria"
+      },
+      {
+        "source": "Cameroon",
+        "target": "Yemen"
+      },
+      {
+        "source": "Cameroon",
+        "target": "Iraq"
+      },
+      {
+        "source": "Colombia",
+        "target": "Pakistan"
+      },
+      {
+        "source": "Colombia",
+        "target": "Venezuela"
+      },
+      {
+        "source": "Haiti",
+        "target": "Iraq"
+      },
+      {
+        "source": "Haiti",
+        "target": "Cameroon"
+      },
+      {
+        "source": "Pakistan",
+        "target": "Democratic Republic of Congo"
+      },
+      {
+        "source": "Democratic Republic of Congo",
+        "target": "Colombia"
+      },
+      {
+        "source": "Ukraine",
+        "target": "Sudan"
+      },
+      {
+        "source": "Ukraine",
+        "target": "Ethiopia"
+      },
+      {
+        "source": "India",
+        "target": "Venezuela"
+      },
+      {
+        "source": "India",
+        "target": "Colombia"
+      },
+      {
+        "source": "Yemen",
+        "target": "South Sudan"
+      },
+      {
+        "source": "Iraq",
+        "target": "Bangladesh"
+      },
+      {
+        "source": "Iraq",
+        "target": "Yemen"
+      },
+      {
+        "source": "Bangladesh",
+        "target": "Honduras"
+      },
+      {
+        "source": "Russia",
+        "target": "Mali"
+      },
+      {
+        "source": "Russia",
+        "target": "Somalia"
+      },
+      {
+        "source": "Ethiopia",
+        "target": "Burkina Faso"
+      },
+      {
+        "source": "Somalia",
+        "target": "Mali"
+      },
+      {
+        "source": "Kenya",
+        "target": "Philippines"
+      },
+      {
+        "source": "Kenya",
+        "target": "Central African Republic"
+      },
+      {
+        "source": "Jamaica",
+        "target": "Haiti"
+      },
+      {
+        "source": "Jamaica",
+        "target": "Burundi"
+      },
+      {
+        "source": "South Sudan",
+        "target": "Niger"
+      },
+      {
+        "source": "South Sudan",
+        "target": "Afghanistan"
+      },
+      {
+        "source": "Honduras",
+        "target": "Guatemala"
+      },
+      {
+        "source": "Honduras",
+        "target": "Philippines"
+      },
+      {
+        "source": "Burkina Faso",
+        "target": "Somalia"
+      },
+      {
+        "source": "Afghanistan",
+        "target": "Philippines"
+      },
+      {
+        "source": "Afghanistan",
+        "target": "Central African Republic"
+      },
+      {
+        "source": "Philippines",
+        "target": "Central African Republic"
+      },
+      {
+        "source": "Trinidad and Tobago",
+        "target": "Israel"
+      },
+      {
+        "source": "Trinidad and Tobago",
+        "target": "Puerto Rico"
+      },
+      {
+        "source": "Israel",
+        "target": "Puerto Rico"
+      },
+      {
+        "source": "Burundi",
+        "target": "Honduras"
+      },
+      {
+        "source": "Burundi",
+        "target": "Yemen"
+      },
+      {
+        "source": "Puerto Rico",
+        "target": "Jamaica"
+      },
+      {
+        "source": "Puerto Rico",
+        "target": "Haiti"
+      },
+      {
+        "source": "South Africa",
+        "target": "Iran"
+      },
+      {
+        "source": "South Africa",
+        "target": "Ecuador"
+      },
+      {
+        "source": "Guatemala",
+        "target": "South Africa"
+      },
+      {
+        "source": "Guatemala",
+        "target": "Ecuador"
+      },
+      {
+        "source": "Niger",
+        "target": "Afghanistan"
+      },
+      {
+        "source": "Central African Republic",
+        "target": "Mozambique"
+      },
+      {
+        "source": "Libya",
+        "target": "Turkey"
+      },
+      {
+        "source": "Libya",
+        "target": "Indonesia"
+      },
+      {
+        "source": "Mozambique",
+        "target": "Chad"
+      },
+      {
+        "source": "Mozambique",
+        "target": "Madagascar"
+      },
+      {
+        "source": "Indonesia",
+        "target": "Ecuador"
+      },
+      {
+        "source": "Indonesia",
+        "target": "Peru"
+      },
+      {
+        "source": "Ecuador",
+        "target": "Peru"
+      },
+      {
+        "source": "Turkey",
+        "target": "Indonesia"
+      },
+      {
+        "source": "Uganda",
+        "target": "Benin"
+      },
+      {
+        "source": "Uganda",
+        "target": "Ghana"
+      },
+      {
+        "source": "Benin",
+        "target": "Ghana"
+      },
+      {
+        "source": "Madagascar",
+        "target": "Chad"
+      },
+      {
+        "source": "Iran",
+        "target": "Chad"
+      },
+      {
+        "source": "Iran",
+        "target": "Mozambique"
+      }
+    ]
+  },
+  "sankey": {
+    "nodes": [
+      {
+        "name": "Africa"
+      },
+      {
+        "name": "Intrastate War"
+      },
+      {
+        "name": "One-sided Violence"
+      },
+      {
+        "name": "Non-state Conflict"
+      },
+      {
+        "name": "Interstate War"
+      },
+      {
+        "name": "Americas"
+      },
+      {
+        "name": "Asia"
+      },
+      {
+        "name": "Europe"
+      },
+      {
+        "name": "Middle East"
+      },
+      {
+        "name": "Cumulative Human Loss"
+      }
+    ],
+    "links": [
+      {
+        "source": 0,
+        "target": 1,
+        "value": 752228
+      },
+      {
+        "source": 0,
+        "target": 2,
+        "value": 1041866
+      },
+      {
+        "source": 0,
+        "target": 3,
+        "value": 131855
+      },
+      {
+        "source": 0,
+        "target": 4,
+        "value": 98675
+      },
+      {
+        "source": 5,
+        "target": 1,
+        "value": 39956
+      },
+      {
+        "source": 5,
+        "target": 2,
+        "value": 25384
+      },
+      {
+        "source": 5,
+        "target": 3,
+        "value": 164007
+      },
+      {
+        "source": 5,
+        "target": 4,
+        "value": 942
+      },
+      {
+        "source": 6,
+        "target": 1,
+        "value": 507098
+      },
+      {
+        "source": 6,
+        "target": 2,
+        "value": 52255
+      },
+      {
+        "source": 6,
+        "target": 3,
+        "value": 20735
+      },
+      {
+        "source": 6,
+        "target": 4,
+        "value": 4752
+      },
+      {
+        "source": 7,
+        "target": 1,
+        "value": 106363
+      },
+      {
+        "source": 7,
+        "target": 2,
+        "value": 20873
+      },
+      {
+        "source": 7,
+        "target": 3,
+        "value": 2711
+      },
+      {
+        "source": 7,
+        "target": 4,
+        "value": 242368
+      },
+      {
+        "source": 8,
+        "target": 1,
+        "value": 580111
+      },
+      {
+        "source": 8,
+        "target": 2,
+        "value": 42661
+      },
+      {
+        "source": 8,
+        "target": 3,
+        "value": 62501
+      },
+      {
+        "source": 8,
+        "target": 4,
+        "value": 32532
+      },
+      {
+        "source": 1,
+        "target": 9,
+        "value": 1985756
+      },
+      {
+        "source": 2,
+        "target": 9,
+        "value": 1183039
+      },
+      {
+        "source": 3,
+        "target": 9,
+        "value": 381809
+      },
+      {
+        "source": 4,
+        "target": 9,
+        "value": 379269
+      }
+    ]
+  }
+}

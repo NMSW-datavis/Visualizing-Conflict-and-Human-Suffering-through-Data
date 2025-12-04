@@ -63,6 +63,10 @@ The datasets informing this project come from respected, openly accessible insti
 
 ---
 
+## Data Proccessing
+
+In order to create a network of similar conflicts a python code was used.  This script transforms raw conflict datasets from [ACLED – Armed Conflict Location & Event Data Project] into a unified JSON structure fit for a network graph for visualization, utilizing K-Nearest Neighbors to compute structural similarities between countries for a network graph. simultaneously, it aggregates 2024 mortality data, mapping flows from macro-regions to specific conflict typologies for a Sankey diagram. The final output normalizes these distinct data streams into a single file ready for frontend rendering.
+
 ## Technical Requirements
 
 - Valid HTML5 & CSS3, tested via the [W3C Validator](https://validator.w3.org/)
