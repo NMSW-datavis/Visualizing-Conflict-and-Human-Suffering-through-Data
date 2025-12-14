@@ -857,16 +857,17 @@ input[type="range"]::-moz-range-thumb {
    background: #f0f4f8; /* Soft blue-grey "ocean" instead of stark white */
   box-shadow: inset 0 0 20px rgba(0,0,0,0.05); /* Inner shadow for depth */
 }
-path {
+path :not(.sankey-link) {
   transition: fill 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
   cursor: pointer; /* Tells user "this is clickable" */
 }
-path:hover {
+path:hover  :not(.sankey-link){
   stroke: #333 !important;
   stroke-width: 1.5px !important;
   filter: brightness(0.95); /* Slight dim to highlight */
   z-index: 10; /* Bring to front (requires re-appending in D3, handled below) */
 }
+
 
 /* 3. Scroll Animation State */
 .map-container svg {

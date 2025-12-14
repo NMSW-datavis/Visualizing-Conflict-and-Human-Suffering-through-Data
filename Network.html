@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Architecture of Instability</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .viz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .view-selector {
+      display: flex;
+      gap: 15px;
+      font-size: 0.9rem;
+      font-family: var(--font-body);
+    }
+    .view-link {
+      cursor: pointer;
+      color: var(--color-secondary);
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      transition: 0.2s;
+    }
+    .view-link:hover { color: var(--color-primary); }
+    .view-link.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* Reset button for network */
+    #network-reset {
+      position: absolute;
+      right: 22%;
+      top: calc( (100vh - 600px) / 2 + 8px ); /* places near chart in container */
+      z-index: 1200;
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    /* Minimap overlay */
+    .minimap {
+      position: absolute;
+      right: 18%;
+      bottom: calc((100vh - 600px) / 2 + 18px);
+      width: 170px;
+      height: 120px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      z-index: 1100;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .minimap svg { width: 100%; height: 100%; display:block; }
+    .minimap-viewport {
+      fill: none;
+      stroke: rgba(0,58,112,0.8);
+      stroke-width: 1.5px;
+      stroke-dasharray: 3 2;
+      pointer-events: all;
+      cursor: move;
+    }
+
+    /* Tooltip small override to ensure it's on top */
+    .viz-tooltip { z-index: 9999999; pointer-events: none; }
+  </style>
+</head>
+<body>
+
+  <div class="viz-tooltip" id="viz-tooltip"></div>
+
+  <header class="site-header">
+    <div class="container">
+      <h1>The Architecture of Instability</h1>
+      <p class="intro-subtitle">
+        How patterns of violence reveal the hidden geometry of political disorder.
+      </p>
+      <a href="index.html" class="return-home">← Back to Home</a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section>
+      <blockquote class="about-quote">
+        “War has a fingerprint. When we look past the map, we see that instability follows a rigid, terrifying geometry.”
+      </blockquote>
+
+      <p class="drop-cap article">
+        To the casual observer, the wars in <strong>Ukraine</strong>, <strong>Gaza</strong>, and <strong>Sudan</strong> appear distinct—separated by geography, ideology, and history. We tend to define conflict by its coordinates. Yet, when analyzed through the lens of data, these chaotic events reveal a hidden structure.
+      </p>
+
+      <p class="article">
+        The network visualization below strips away the map. Instead of physical borders, it connects countries based on the <strong>mathematical similarity</strong> of their violence. By measuring the deadliness, the fragmentation of armed groups, and the volatility of battles, we find that nations thousands of miles apart share the same "structural DNA."
+      </p>
+    </section>
+
+    <div class="container" style="max-width: 900px; margin: 2rem auto; position:relative;">
+        
+  
+        
+        <div id="network-chart" style="height: 600px; background:#fafafa; border:none; position:relative;"></div>
+
+        <div class="legend" style="justify-content:center; margin-top:10px; padding-top:10px; border-top:1px solid #eee;">
+          <span class="legend-item"><span class="dot" style="background:#e67e22"></span>Africa</span>
+          <span class="legend-item"><span class="dot" style="background:#8e44ad"></span>Middle East</span>
+          <span class="legend-item"><span class="dot" style="background:#2980b9"></span>Asia</span>
+          <span class="legend-item"><span class="dot" style="background:#c0392b"></span>Americas</span>
+          <span class="legend-item"><span class="dot" style="background:#27ae60"></span>Europe</span>
+
+          <div style="margin-left:auto;">
+            <input type="text" id="network-search" placeholder="Locate country..." style="padding:4px 8px; border:1px solid #ccc; border-radius:4px; font-size:0.8rem;">
+          </div>
+        </div>
+
+      <p class="small muted" style="text-align:center; margin-top:0.5rem;">
+        <em>Interactive: Drag nodes to explore connections. Larger nodes indicate higher fatality counts.</em>
+      </p>
+    </div>
+
+    <section>
+      <p class="article">
+        While most conflicts cluster along familiar regional lines, the data exposes a striking anomaly: the structural link between <strong>Mexico</strong> and <strong>Nigeria</strong>. On a map, they are oceans apart. Structurally, they are twins. Both nations are categorized as "Extreme" conflict zones, characterized not by a single front line, but by a fragmented web of non-state actors—cartels in Mexico, bandit groups and insurgents in Nigeria. This specific signature of violence creates a distinct "fingerprint" that binds them together in the network, separating them from the conventional wars of Eastern Europe or the Middle East.
+      </p>
+      
+      <p class="article">
+        If the network shows the <em>shape</em> of violence, the flow diagram below reveals its <em>outcome</em>. It traces the path from regional instability to human loss, highlighting a grim reality: the dominance of <strong>Intrastate War</strong> (civil conflict) as the primary engine of modern death.
+      </p>
+
+      <p class="article">
+        Perhaps the most disturbing metric in the visualization below is the cyan stream representing <strong>One-Sided Violence</strong>. These are not battles between armies, but the targeted massacre of unarmed civilians. In regions like Africa, this "shadow war" often claims as many lives as the fighting itself.
+      </p>
+    </section>
+
+    <div class="container" style="max-width:900px; margin:2rem auto;">
+      <button id="sankey-reset" class="btn-reset small" style="display:none; padding:2px 8px; font-size:0.75rem;">Reset Filter</button>
+      <div id="sankey-chart" style="height:500px;"></div>
+      <div id="sankey-status" class="small" style="text-align:center; margin-top:10px; min-height:1.5em; font-weight:600; color:var(--color-secondary);">
+        Hover over any stream to view fatality statistics.
+      </div>
+    </div>
+
+    <section>
+      <p class="article">
+        By visualizing these flows, we move beyond the daily headlines to see the systemic nature of global disorder. The architecture of instability is robust, repetitive, and indifferent to borders. Understanding its shape is the first step toward understanding its scale.
+      </p>
+    </section>
+
+    <div style="text-align:center; margin:5rem 0 3rem;">
+       <a href="index.html" class="return-home large">← Return To Home</a>
+    </div>
+
+</main>
+
+    <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-logo">
+        <img src="./logo-colore.png" alt="unige logo" />
+      </div>
+      <p>Università di Genova – Data Visualization Course • For educational purposes only</p>
+    </div>
+  </footer>
+
+  <script src="Network.js"></script>
+</body>
+</html>
