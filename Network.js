@@ -392,7 +392,10 @@
     const sankey = d3.sankey().nodeWidth(20).nodePadding(14).extent([[1, 1], [width - 1, height - 6]]);
     const { nodes, links } = sankey(sankeyData);
 
-    const globalTotal = d3.sum(nodes.filter(n => n.layer === 0 || n.sourceLinks).map(d => d.value || 0));
+const globalTotal = d3.sum(
+  links.filter(l => l.target.sourceLinks.length === 0),
+  d => d.value
+);
 
     const defs = svg.append("defs");
     links.forEach((d, i) => {
